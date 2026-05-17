@@ -1,4 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { Readability } from "@mozilla/readability";
+import * as cheerio from "cheerio";
+import { JSDOM } from "jsdom";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -11,6 +14,10 @@ const BLOCKED_PAGE_PATTERNS = [
   /sign in to/i,
   /unsupported browser/i,
   /access denied/i,
+  /something went wrong/i,
+  /please wait for verification/i,
+  /verify you are human/i,
+  /checking if the site connection is secure/i,
 ];
 
 function getDomain(url: string) {
@@ -40,7 +47,139 @@ function getMeta(html: string, selector: string) {
   return decodeHtml(html.match(pattern)?.[1] ?? "");
 }
 
-function extractMetadata(html: string) {
+function firstText(...values: Array<string | undefined>) {
+  return values.map((value) => decodeHtml(value ?? "")).find(Boolean) ?? "";
+}
+
+function firstJsonLdValue(html: string, keys: string[]) {
+  const $ = cheerio.load(html);
+  for (const element of $('script[type="application/ld+json"]').toArray()) {
+    try {
+      const raw = $(element).text();
+      const parsed = JSON.parse(raw);
+      const items = Array.isArray(parsed) ? parsed : [parsed];
+      for (const item of items.flatMap((entry) => (Array.isArray(entry?.["@graph"]) ? entry["@graph"] : [entry]))) {
+        for (const key of keys) {
+          const value = item?.[key];
+          if (typeof value === "string" && value.trim()) return decodeHtml(value);
+          if (Array.isArray(value) && typeof value[0] === "string") return decodeHtml(value[0]);
+          if (value && typeof value.url === "string") return decodeHtml(value.url);
+        }
+      }
+    } catch {
+      // Ignore malformed JSON-LD; many pages include partial or tracking script data.
+    }
+  }
+  return "";
+}
+
+function extractReadableText(html: string, finalUrl: string) {
+  try {
+    const dom = new JSDOM(html, { url: finalUrl });
+    const article = new Readability(dom.window.document).parse();
+    const text = firstText(article?.excerpt ?? "", article?.textContent ?? "");
+    if (text) return text.slice(0, 360);
+  } catch {
+    // Fall back to Cheerio selectors below.
+  }
+
+  const $ = cheerio.load(html);
+  const semanticText = $("article p, main p, [role='main'] p, .post p, .entry-content p")
+    .toArray()
+    .map((element) => $(element).text())
+    .join(" ");
+
+  return decodeHtml(semanticText || $("body").text()).slice(0, 360);
+}
+
+function extractMetadata(html: string, finalUrl: string) {
+  const $ = cheerio.load(html);
+  const title = firstText(
+    $('meta[property="og:title"]').attr("content"),
+    $('meta[name="twitter:title"]').attr("content"),
+    firstJsonLdValue(html, ["headline", "name"]),
+    $("title").first().text(),
+    $("h1").first().text(),
+    getMeta(html, "og:title"),
+    getMeta(html, "twitter:title"),
+  );
+  const description = firstText(
+    $('meta[property="og:description"]').attr("content"),
+    $('meta[name="description"]').attr("content"),
+    $('meta[name="twitter:description"]').attr("content"),
+    firstJsonLdValue(html, ["description"]),
+    extractReadableText(html, finalUrl),
+  );
+  const imageUrl = firstText(
+    $('meta[property="og:image"]').attr("content"),
+    $('meta[name="twitter:image"]').attr("content"),
+    firstJsonLdValue(html, ["image"]),
+  );
+
+  return { title, description, imageUrl };
+}
+
+async function tryYouTubeOembed(url: URL) {
+  const domain = url.hostname.replace(/^www\./, "");
+  if (!domain.includes("youtube.com") && !domain.includes("youtu.be")) return null;
+
+  const endpoint = `https://www.youtube.com/oembed?url=${encodeURIComponent(url.href)}&format=json`;
+  const response = await fetch(endpoint, { signal: AbortSignal.timeout(CAPTURE_TIMEOUT_MS) });
+  if (!response.ok) return null;
+  const data = (await response.json()) as { title?: string; author_name?: string; thumbnail_url?: string };
+
+  return {
+    captureStatus: "metadata",
+    captureMethod: "oembed",
+    fallbackAvailable: true,
+    parserUsed: "server-youtube-oembed",
+    finalUrl: url.href,
+    contentType: "application/json",
+    title: data.title || "YouTube video",
+    description: data.author_name ? `Video by ${data.author_name}` : "YouTube video metadata captured.",
+    imageUrl: data.thumbnail_url,
+    domain,
+    userMessage: "Server oEmbed metadata captured.",
+  };
+}
+
+async function tryRedditJson(url: URL) {
+  const domain = url.hostname.replace(/^www\./, "");
+  if (!domain.includes("reddit.com")) return null;
+
+  const endpoint = `https://www.reddit.com${url.pathname.replace(/\/$/, "")}.json?raw_json=1`;
+  const response = await fetch(endpoint, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "LinkTrace/0.1 metadata capture for local user-saved links",
+    },
+    signal: AbortSignal.timeout(CAPTURE_TIMEOUT_MS),
+  });
+  if (!response.ok) return null;
+  const data = (await response.json()) as Array<{ data?: { children?: Array<{ data?: Record<string, unknown> }> } }>;
+  const post = data[0]?.data?.children?.[0]?.data;
+  if (!post) return null;
+  const title = typeof post.title === "string" ? post.title : "Reddit link";
+  const subreddit = typeof post.subreddit_name_prefixed === "string" ? post.subreddit_name_prefixed : domain;
+  const selftext = typeof post.selftext === "string" ? post.selftext : "";
+  const description = firstText(selftext, typeof post.link_flair_text === "string" ? post.link_flair_text : "", subreddit);
+
+  return {
+    captureStatus: description ? "metadata" : "partial",
+    captureMethod: "fetch",
+    failureReason: description ? undefined : "metadata_missing",
+    fallbackAvailable: true,
+    parserUsed: "server-reddit-json",
+    finalUrl: url.href,
+    contentType: "application/json",
+    title,
+    description: description || `Reddit source from ${subreddit}.`,
+    domain,
+    userMessage: "Server Reddit JSON metadata captured.",
+  };
+}
+
+function extractMetadataLegacy(html: string) {
   const title =
     getMeta(html, "og:title") ||
     getMeta(html, "twitter:title") ||
@@ -66,6 +205,9 @@ async function captureFromServer(urlInput: string) {
   if (!["http:", "https:"].includes(parsed.protocol)) {
     throw new Error("Unsupported protocol");
   }
+
+  const platformResult = (await tryYouTubeOembed(parsed)) ?? (await tryRedditJson(parsed));
+  if (platformResult) return platformResult;
 
   const response = await fetch(parsed.href, {
     headers: {
@@ -114,7 +256,11 @@ async function captureFromServer(urlInput: string) {
   }
 
   const html = await response.text();
-  const metadata = extractMetadata(html);
+  const metadata = extractMetadata(html, finalUrl);
+  const legacyMetadata = extractMetadataLegacy(html);
+  if (!metadata.title) metadata.title = legacyMetadata.title;
+  if (!metadata.description) metadata.description = legacyMetadata.description;
+  if (!metadata.imageUrl) metadata.imageUrl = legacyMetadata.imageUrl;
   const title = metadata.title || domain;
   const description = metadata.description || "The server reached this page but did not find readable metadata.";
   const blockedPage = BLOCKED_PAGE_PATTERNS.some((pattern) => pattern.test(`${title} ${description}`));
@@ -140,7 +286,7 @@ async function captureFromServer(urlInput: string) {
     captureMethod: "fetch",
     failureReason: metadata.description ? undefined : "metadata_missing",
     fallbackAvailable: true,
-    parserUsed: "server-fetch-metadata",
+    parserUsed: "server-fetch-cheerio-readability",
     finalUrl,
     contentType,
     title,
@@ -169,21 +315,29 @@ async function handleCaptureRequest(request: IncomingMessage, response: ServerRe
     response.setHeader("Content-Type", "application/json");
     response.end(JSON.stringify(result));
   } catch (error) {
+    const invalidUrl = fallbackUrl ? !URL.canParse(fallbackUrl) : true;
     response.statusCode = 200;
     response.setHeader("Content-Type", "application/json");
     response.end(
       JSON.stringify({
         captureStatus: "link_only",
         captureMethod: "fallback",
-        failureReason: error instanceof Error && error.name === "TimeoutError" ? "timeout" : "network_error",
+        failureReason: invalidUrl
+          ? "invalid_url"
+          : error instanceof Error && error.name === "TimeoutError"
+            ? "timeout"
+            : "network_error",
         fallbackAvailable: true,
-        parserUsed: "server-fetch-fallback",
+        parserUsed: invalidUrl ? "server-url-validator" : "server-fetch-fallback",
         finalUrl: fallbackUrl,
         title: fallbackUrl ? getDomain(fallbackUrl) : "Link saved with fallback",
-        description:
-          "The server capture route could not read this page directly. It may require login, block bots, or be unavailable.",
+        description: invalidUrl
+          ? "The link format could not be parsed."
+          : "The server capture route could not read this page directly. It may require login, block bots, or be unavailable.",
         domain: fallbackUrl ? getDomain(fallbackUrl) : "manual source",
-        userMessage: "Server capture failed, so LinkTrace kept the link-only fallback.",
+        userMessage: invalidUrl
+          ? "This does not look like a valid URL, but LinkTrace kept your note."
+          : "Server capture failed, so LinkTrace kept the link-only fallback.",
       }),
     );
   }

@@ -20,26 +20,42 @@ The server route fixes many CORS failures for public pages such as GitHub repos 
 
 ## Package Evaluation
 
-Evaluated candidates:
+Evaluated and used candidates:
 
 | Package | Current version checked | Fit | Decision |
 | --- | --- | --- | --- |
-| `link-preview-js` | 4.0.3 | Has TypeScript types and link preview scope, but is more useful in a server/runtime fetch path than this browser-only MVP. | Do not install yet; native DOMParser is enough for current client path. |
-| `@mozilla/readability` | 0.6.0 | Good article extraction library with types, but needs available HTML and usually pairs with a DOM implementation in non-browser environments. | Do not install yet; current blocker is fetch access/CORS, not article extraction quality. |
-| `@extractus/oembed-extractor` | 4.1.0 | Relevant to YouTube/video metadata, but direct YouTube oEmbed endpoint is simpler for this MVP and avoids an extra dependency. | Do not install yet; use direct oEmbed attempt first. |
+| `cheerio` | 1.2.0 | Server-compatible HTML parser for OG/Twitter/JSON-LD/title/H1/semantic paragraph extraction. | Installed and used in `/api/capture`. |
+| `@mozilla/readability` | 0.6.0 | Good article extraction library with types when paired with a DOM implementation. | Installed and used with `jsdom` for readable body/excerpt extraction. |
+| `jsdom` | installed | Provides DOM for Readability in the Vite server route. | Installed and used only server-side. |
+| `link-preview-js` | 4.0.3 | Link preview scope overlaps with current server route, but it adds less control over failure classification than the explicit pipeline. | Not installed. |
+| `@extractus/oembed-extractor` | 4.1.0 | Relevant to oEmbed, but direct YouTube oEmbed is enough for current MVP. | Not installed; direct provider call used. |
 
-No package was installed because the highest-risk failures are platform access, CORS, login walls, and bot protection. A package would not safely solve those in a client-only demo.
+Packages are used only after the server fetch returns HTML. They improve card content for public pages, but do not bypass login walls, bot checks, paywalls, private pages, or JavaScript-only rendering.
 
 ## Platform Smoke Matrix
 
 | Platform | Representative URL | Capture path | Expected result |
 | --- | --- | --- | --- |
 | X/Twitter | `https://x.com/example/status/123` | server capture, blocked-page detection, platform fallback | `link_only`, `js_rendered` or `blocked_or_login_required`, saved source with fallback copy |
-| Reddit | `https://www.reddit.com/r/programming/` | platform fallback | `partial`, `metadata_missing`, saved source with community/domain cue |
+| Reddit | `https://www.reddit.com/r/programming/` | Reddit JSON attempt, server capture, blocked-page detection | metadata when public JSON works, otherwise `blocked_or_login_required` with saved URL/domain |
 | GitHub | `https://github.com/Q00/ouroboros` | server capture, then browser fallback | `metadata` with repo title/description |
 | YouTube | `https://www.youtube.com/watch?v=dQw4w9WgXcQ` | direct oEmbed, then fallback | metadata via oEmbed or explicit timeout/network fallback |
 | News | `https://www.reuters.com/technology/` | server capture, then browser fallback | metadata when public, otherwise `blocked_or_login_required` |
 | Blog | `https://newsletter.pragmaticengineer.com/` | server capture, then browser fallback | `metadata` with blog title/description |
+
+## Latest Smoke Run
+
+Run date: 17 May 2026
+
+| Platform | Status | Parser | Result |
+| --- | --- | --- | --- |
+| X/Twitter | `link_only` | `server-blocked-page-detection` | Detected verification/error shell and kept fallback reason. |
+| Reddit | `link_only` | `server-blocked-page-detection` | Detected verification page and kept fallback reason. |
+| GitHub | `metadata` | `server-fetch-cheerio-readability` | Captured repo title and description. |
+| YouTube | `metadata` | `server-youtube-oembed` | Captured video title/provider metadata. |
+| Reuters news | `link_only` | `server-fetch-status` | HTTP 401 classified as `blocked_or_login_required`. |
+| Pragmatic Engineer blog | `metadata` | `server-fetch-cheerio-readability` | Captured blog title and description. |
+| Invalid URL | `link_only` | `server-url-validator` | Classified as `invalid_url`. |
 
 ## Follow-Up
 

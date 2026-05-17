@@ -1,12 +1,14 @@
 ---
 id: 005
-status: done-with-follow-up
-title: "Capture URL metadata with graceful fallback"
+status: done
+title: "Capture URL metadata and readable content with recovery loop"
 ---
 
 ## Problem
 
 Users will share links from messy places. LinkTrace should try to fetch useful metadata, but the app must still work when a link is blocked, private, paywalled, or JavaScript-heavy.
+
+This ticket is intentionally more aggressive than a single metadata fetch. If a link does not produce useful card content, the loop must inspect the failure, improve the capture path when possible, rerun the platform smoke matrix, and only fall back when the page is genuinely blocked, private, bot-protected, or JavaScript-only.
 
 ## Acceptance
 
@@ -15,11 +17,12 @@ Users will share links from messy places. LinkTrace should try to fetch useful m
   1. normalize and validate URL
   2. fetch with timeout and clear user-agent
   3. inspect response status, redirects, final URL, content type, and content length
-  4. extract Open Graph / Twitter Card / basic HTML metadata
-  5. attempt article text extraction when HTML content is available
-  6. apply platform-specific metadata when obvious and low-risk, especially YouTube/oEmbed-style metadata
-  7. classify the capture result and failure reason
-  8. save fallback source data even when parsing fails
+  4. attempt platform-specific metadata when obvious and low-risk, especially YouTube oEmbed and Reddit JSON
+  5. extract Open Graph / Twitter Card / JSON-LD / basic HTML metadata
+  6. attempt readable article/body extraction when HTML content is available
+  7. detect login walls, bot checks, JavaScript-only shells, and verification pages
+  8. classify the capture result and failure reason
+  9. save fallback source data even when parsing fails
 - The app attempts best-effort metadata extraction:
   - title
   - description
@@ -33,6 +36,7 @@ Users will share links from messy places. LinkTrace should try to fetch useful m
   - malformed metadata
   - timeout
 - If parsing failures are caused by missing extraction capability, search for suitable maintained packages, install the best fit, and use it in the capture path.
+- After each capture-path change, rerun X/Twitter, Reddit, GitHub, YouTube, news, and blog smoke tests and keep improving until each platform returns either card content or a trustworthy fallback reason.
 - Package choices and the reason for choosing them are recorded in `## Completion Notes` or `## Follow-up Notes`.
 - The capture result exposes both user-facing and developer-facing fields:
   - `captureStatus`
@@ -158,6 +162,23 @@ Use a generous loop for this ticket:
 
 If a package worsens build reliability, source saving, or demo fallback behavior, remove it before completing the ticket.
 
+## Crawler Recovery Loop
+
+When a pasted URL does not fill a card with useful content:
+
+1. Reproduce the URL through `/api/capture`.
+2. Inspect status, final URL, content type, title, description, parser, and failure reason.
+3. Decide whether the failure is:
+   - recoverable extraction weakness: missing OG/Twitter/JSON-LD/readability parsing
+   - recoverable platform path: oEmbed, JSON endpoint, public API, or canonical URL
+   - non-recoverable MVP access block: login, bot check, paywall, private page, or JavaScript-only shell
+4. For recoverable extraction weakness, add or tune a parser package and rerun all six platform smoke tests.
+5. For recoverable platform path, add a narrow platform adapter and rerun all six platform smoke tests.
+6. For access blocks, do not bypass protections. Return a saved card with domain, final URL, failure reason, and screenshot/manual prompt.
+7. The ticket is not complete until every smoke URL produces either:
+   - useful title/description/image/readable text, or
+   - a precise fallback reason that a normal user can understand.
+
 ## Package Evaluation Guidance
 
 Evaluate packages in this order of preference:
@@ -218,14 +239,15 @@ npm run build
 
 ## Completion Notes
 
-- Files changed: `src/types.ts`, `src/capture.ts`, `src/App.tsx`, `src/styles.css`, `doc/url-capture-smoke.md`, `doc/tickets/005-url-capture-and-metadata.md`.
-- Checks run: `npm view link-preview-js version description license types --json`; `npm view @mozilla/readability version description license types --json`; `npm view @extractus/oembed-extractor version description license types --json`; `npm run build`.
-- Added a browser-safe capture service that accepts a URL, normalizes and validates it, saves a fallback source immediately, classifies platform and fetch failures, attempts YouTube oEmbed, fetches readable HTML with timeout, extracts Open Graph/Twitter/basic HTML metadata with DOMParser, records content type/final URL/parser used/failure reason, and merges the result into the saved source.
-- The UI now exposes capture quality badges, failure reasons, and a visible capture fallback ladder so blocked links feel handled rather than broken.
-- Package candidates were evaluated in `doc/url-capture-smoke.md`. No package was installed in this pass because the primary MVP failures are browser CORS, login walls, bot protection, or platform limits rather than missing parser capability.
+- Files changed across the final capture pass: `vite.config.ts`, `src/capture.ts`, `package.json`, `package-lock.json`, `doc/url-capture-smoke.md`, `doc/tickets/005-url-capture-and-metadata.md`.
+- Checks run: `npm view cheerio version`; `npm view @mozilla/readability version`; `npm view link-preview-js version`; `npm run build`; `/api/capture` smoke matrix for X/Twitter, Reddit, GitHub, YouTube, Reuters news, Pragmatic Engineer blog, and invalid URL.
+- Added a Vite dev/preview `/api/capture` server route so public pages can be fetched without browser CORS restrictions.
+- Added platform-specific capture attempts for YouTube oEmbed and Reddit JSON before generic HTML parsing.
+- Installed and integrated `cheerio`, `@mozilla/readability`, `jsdom`, and `@types/jsdom` so server capture can parse Open Graph, Twitter Card, JSON-LD, title/H1, semantic article text, and readability excerpts.
+- Added blocked-page detection so X/Twitter and Reddit verification/error shells are not misclassified as real metadata.
+- Current smoke results: GitHub, YouTube, and Pragmatic Engineer blog return useful card metadata; X/Twitter and Reddit return `blocked_or_login_required`; Reuters returns `blocked_or_login_required` from HTTP 401; malformed input returns `invalid_url`.
 
 ## Follow-up Notes
 
-- Browser clients cannot set a custom `User-Agent`; this would require a later server capture route.
-- Live metadata quality for GitHub/news/blog may still depend on CORS and platform response headers. The current demo-safe fallback stores the source and reason within the save flow.
-- If URL capture becomes a judging centerpiece, add a server capture route and re-evaluate `link-preview-js`, `@mozilla/readability`, and `@extractus/oembed-extractor` behind that route.
+- Server capture improves public-page metadata but still does not bypass login walls, bot checks, paywalls, private pages, or JavaScript-only rendering.
+- If deeper platform coverage becomes necessary, add narrow adapters for specific public APIs rather than browser automation or protection bypasses.

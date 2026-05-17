@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, TouchEvent, useEffect, useMemo, useRef, useState } from "react";
-import { buildFallbackSource, captureUrl, mergeCaptureResult } from "./capture";
+import { buildFallbackSource, captureUrl, mergeCaptureResult, normalizeUrl } from "./capture";
 import { buildMemoryClusters } from "./clusters";
 import type { SourceItem } from "./types";
 
@@ -145,10 +145,31 @@ function readStoredSources(): SourceItem[] {
     const rawValue = window.localStorage.getItem(STORAGE_KEY);
     if (!rawValue) return [];
     const parsed = JSON.parse(rawValue);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? dedupeSources(parsed) : [];
   } catch {
     return [];
   }
+}
+
+function sourceKey(source: SourceItem) {
+  try {
+    const parsed = new URL(normalizeUrl(source.finalUrl || source.url));
+    parsed.hash = "";
+    const pathname = parsed.pathname.replace(/\/+$/, "") || "/";
+    return `${parsed.protocol}//${parsed.hostname.toLowerCase()}${pathname}${parsed.search}`;
+  } catch {
+    return normalizeUrl(source.finalUrl || source.url).toLowerCase();
+  }
+}
+
+function dedupeSources(sources: SourceItem[]) {
+  const seen = new Set<string>();
+  return sources.filter((source) => {
+    const key = sourceKey(source);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function includesAny(value: string, query: string, tokens: string[]) {
@@ -312,6 +333,13 @@ function App() {
   const pinchDistanceRef = useRef<number | null>(null);
 
   useEffect(() => {
+    setSources((current) => {
+      const deduped = dedupeSources(current);
+      return deduped.length === current.length ? current : deduped;
+    });
+  }, []);
+
+  useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
   }, [sources]);
 
@@ -422,18 +450,28 @@ function App() {
 
   function saveSharedSource(nextUrl: string, nextNote: string) {
     const fallbackSource = buildFallbackSource(nextUrl, nextNote);
-    setSources((current) => [fallbackSource, ...current]);
+    const key = sourceKey(fallbackSource);
+    const existingSource = sources.find((source) => sourceKey(source) === key);
+    const targetSource = existingSource ?? fallbackSource;
+    setSources((current) => {
+      const withoutDuplicate = current.filter((source) => sourceKey(source) !== key);
+      return [targetSource, ...withoutDuplicate];
+    });
     setSaveStatus("Saved locally. Checking capture quality...");
     window.setTimeout(() => briefRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
     void captureUrl(nextUrl)
       .then((result) => {
         setSources((current) =>
-          current.map((source) =>
-            source.id === fallbackSource.id ? mergeCaptureResult(source, result) : source,
+          dedupeSources(
+            current.map((source) =>
+              source.id === targetSource.id ? mergeCaptureResult(source, result) : source,
+            ),
           ),
         );
         setSaveStatus(
-          result.captureStatus === "metadata"
+          existingSource
+            ? "Already saved. Refreshed capture details."
+            : result.captureStatus === "metadata"
             ? "Saved with metadata."
             : "Saved with fallback. You can still find it by memory.",
         );

@@ -71,7 +71,22 @@ URL parsing is a core product risk. Do not treat parse failure as a generic erro
    - important behavior added
 3. If status is `done-with-follow-up`, add `## Follow-up Notes` with unmet criteria, fallback used, and the next improvement.
 4. Commit with message: `Complete ticket NNN: <title>`.
-5. Continue to the next todo ticket when explicitly instructed to keep looping.
+5. Push the commit to GitHub after the ticket passes.
+6. Continue to the next todo ticket when explicitly instructed to keep looping.
+
+## Final Demo Handoff
+
+When all development tickets are complete or the user says the project is ready for final demo:
+
+1. Run the final verification gate:
+   - `npm run build`
+   - mobile viewport check around 390px wide
+   - 3-minute happy path: load demo data, open Today Brief, search by memory, open Memory Clusters, and show a selected cluster or fallback state
+2. Start the local app server if one is not already running.
+3. Open the final product in the browser so the user can see the working screen, not only a text report.
+4. Keep the server running long enough for the user to inspect the demo.
+5. Report the local URL, verification result, final commit hash, and any `done-with-follow-up` items.
+6. Commit and push the final state to GitHub after the final verification passes.
 
 ## Failure Handling
 

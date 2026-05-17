@@ -4,6 +4,8 @@ This directory contains the LinkTrace Ralphthon ticket queue.
 
 Execute tickets in numbered order unless demo survival requires a small dependency adjustment.
 
+When a ticket passes, commit and push it before moving to the next ticket. When all development tickets are complete, run the final demo gate and open the finished LinkTrace screen in the browser for the user.
+
 Use this shape:
 
 ```md

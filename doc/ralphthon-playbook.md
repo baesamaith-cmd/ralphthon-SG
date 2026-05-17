@@ -151,6 +151,18 @@ Once the ban starts:
 - If the agent misses a quality target but preserves a demoable fallback, it records `done-with-follow-up` and keeps moving.
 - If the agent is blocked because build or minimum demo viability fails, it records the blocker in the ticket instead of guessing.
 
+## Phase 7: Final Demo Handoff
+
+When all development tickets are complete, the agent must not stop at a written summary.
+
+- Run the final verification gate, including `npm run build` when an app stack exists.
+- Check the mobile demo path around a 390px viewport.
+- Start the local app server.
+- Open the final LinkTrace product screen in the browser for inspection.
+- Keep the server running while the user reviews the result.
+- Commit and push the final verified state to GitHub.
+- Report the local URL, final commit hash, and any remaining `done-with-follow-up` items.
+
 ## Recommended Start Prompt For 17 May 2026
 
 ```text

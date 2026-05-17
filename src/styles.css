@@ -377,6 +377,8 @@ h1 {
   background: rgba(255, 255, 255, 0.72);
   color: rgba(33, 49, 43, 0.78);
   padding: 8px 10px;
+  border: 1px solid rgba(31, 111, 91, 0.14);
+  text-align: left;
 }
 
 .cluster-label strong {
@@ -400,6 +402,16 @@ h1 {
   line-height: 1.15;
   padding: 0 8px;
   transform: translate(-50%, -50%);
+}
+
+.cluster-node.is-dimmed {
+  opacity: 0.32;
+}
+
+.cluster-node.is-selected {
+  border-color: #1f6f5b;
+  background: #e9f5ef;
+  opacity: 1;
 }
 
 .cluster-label-1 {
@@ -426,6 +438,56 @@ h1 {
 .cluster-label-6 {
   left: 34%;
   top: 46%;
+}
+
+.bottom-sheet {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  bottom: 0;
+  width: min(100%, 430px);
+  max-height: 72vh;
+  overflow: auto;
+  transform: translateX(-50%);
+  border: 1px solid #dbe1d8;
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  background: #ffffff;
+  padding: 10px 16px 18px;
+  box-shadow: 0 -18px 40px rgba(31, 45, 39, 0.18);
+}
+
+.sheet-handle {
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: #cbd4c7;
+}
+
+.sheet-source-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.sheet-source {
+  padding: 12px;
+  border: 1px solid #dbe1d8;
+  border-radius: 8px;
+  background: #fbfcf8;
+}
+
+.sheet-source h3 {
+  margin: 0;
+  font-size: 0.96rem;
+}
+
+.sheet-source p {
+  margin: 6px 0 0;
+  color: #596960;
+  font-size: 0.86rem;
+  line-height: 1.35;
 }
 
 @media (min-width: 760px) {

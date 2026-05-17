@@ -1,6 +1,6 @@
 ---
 id: 011
-status: todo
+status: done
 title: "Focus a selected memory cluster"
 ---
 
@@ -65,3 +65,9 @@ npm run build
 ## Hints
 
 - Treat the bottom sheet as the place for detail; keep the canvas lightweight.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/011-cluster-focus-bottom-sheet.md`.
+- Checks run: `npm run build`; `rg -n "selectedCluster|bottom-sheet|Selected cue|related sources|sharedCues|is-dimmed|opacity: 0\\.32|sheet-source|Close|selectClusterForSource|Reset" src/App.tsx src/styles.css`.
+- Added cluster focus state, node-to-cluster selection, selected-node emphasis, unrelated-node dimming to 32% opacity, tappable cluster labels, a mobile bottom sheet with selected cue label, source count, shared cues, related summaries, `Find later by` cues, one-tap close, and reset behavior that returns to the full cluster view.

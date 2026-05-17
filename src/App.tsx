@@ -211,6 +211,7 @@ function App() {
   const [note, setNote] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSource, setSelectedSource] = useState<SourceItem | null>(null);
+  const [selectedClusterId, setSelectedClusterId] = useState<string | null>(null);
   const [clusterZoom, setClusterZoom] = useState(1);
   const [clusterPan, setClusterPan] = useState({ x: 0, y: 0 });
   const dragStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
@@ -263,6 +264,15 @@ function App() {
   }, [sources]);
 
   const searchResults = useMemo(() => searchSources(sources, searchQuery), [sources, searchQuery]);
+  const selectedCluster = useMemo(
+    () => clusters.find((cluster) => cluster.id === selectedClusterId) ?? null,
+    [clusters, selectedClusterId],
+  );
+  const selectedClusterSources = useMemo(() => {
+    if (!selectedCluster) return [];
+    const selectedIds = new Set(selectedCluster.sourceIds);
+    return sources.filter((source) => selectedIds.has(source.id));
+  }, [selectedCluster, sources]);
 
   const clusterNodes = useMemo<ClusterNode[]>(() => {
     const sourceById = new Map(sources.map((source) => [source.id, source]));
@@ -334,7 +344,13 @@ function App() {
   function resetClusterView() {
     setClusterZoom(1);
     setClusterPan({ x: 0, y: 0 });
+    setSelectedClusterId(null);
     pinchDistanceRef.current = null;
+  }
+
+  function selectClusterForSource(sourceId: string) {
+    const cluster = clusters.find((candidate) => candidate.sourceIds.includes(sourceId));
+    if (cluster) setSelectedClusterId(cluster.id);
   }
 
   function handleClusterPointerDown(clientX: number, clientY: number) {
@@ -598,18 +614,25 @@ function App() {
               }}
             >
               {clusters.map((cluster, index) => (
-                <div className={`cluster-label cluster-label-${index + 1}`} key={cluster.id}>
+                <button
+                  className={`cluster-label cluster-label-${index + 1}`}
+                  key={cluster.id}
+                  type="button"
+                  onClick={() => setSelectedClusterId(cluster.id)}
+                >
                   <strong>{cluster.label}</strong>
                   <span>{cluster.sourceCount} links</span>
-                </div>
+                </button>
               ))}
               {clusterNodes.map((node) => (
                 <button
-                  className="cluster-node"
+                  className={`cluster-node ${
+                    selectedCluster && !selectedCluster.sourceIds.includes(node.id) ? "is-dimmed" : ""
+                  } ${selectedCluster?.sourceIds.includes(node.id) ? "is-selected" : ""}`}
                   key={node.id}
                   style={{ left: `${node.x}%`, top: `${node.y}%` }}
                   type="button"
-                  onClick={() => setSelectedSource(sources.find((source) => source.id === node.id) ?? null)}
+                  onClick={() => selectClusterForSource(node.id)}
                 >
                   {node.label}
                 </button>
@@ -617,6 +640,45 @@ function App() {
             </div>
           </div>
         </section>
+
+        {selectedCluster ? (
+          <section className="bottom-sheet" aria-label="Selected memory cluster">
+            <div className="sheet-handle" aria-hidden="true" />
+            <div className="section-heading">
+              <div>
+                <p className="cue-label">Selected cue</p>
+                <h2>{selectedCluster.label}</h2>
+                <p className="section-subtitle">{selectedCluster.sourceCount} related sources</p>
+              </div>
+              <button type="button" onClick={() => setSelectedClusterId(null)}>
+                Close
+              </button>
+            </div>
+            <div className="mini-chip-row" aria-label="Shared cues">
+              {selectedCluster.sharedCues.slice(0, 4).map((cue) => (
+                <span className="mini-chip" key={cue}>
+                  {cue}
+                </span>
+              ))}
+            </div>
+            <div className="sheet-source-list">
+              {selectedClusterSources.map((source) => (
+                <article className="sheet-source" key={source.id}>
+                  <h3>{source.title}</h3>
+                  <p>{source.summary}</p>
+                  <p className="cue-label">Find later by</p>
+                  <div className="mini-chip-row">
+                    {source.recallCues.map((cue) => (
+                      <span className="mini-chip" key={cue}>
+                        {cue}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </section>
     </main>
   );

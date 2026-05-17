@@ -221,6 +221,19 @@ function App() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
   }, [sources]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedUrl = params.get("url") || params.get("text") || "";
+    const sharedTitle = params.get("title") || "Shared to LinkTrace";
+
+    if (window.location.pathname === "/share" && sharedUrl) {
+      saveSharedSource(sharedUrl, sharedTitle);
+      window.history.replaceState({}, "", "/");
+    }
+    // Run only once on startup so URL share params do not duplicate sources.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const cueItems = useMemo(() => {
     const cues = sources.flatMap((source) => source.recallCues).slice(0, 3);
     return cues.length > 0 ? cues : ["AI summaries", "sleep habit", "open-source notes"];
@@ -313,18 +326,22 @@ function App() {
     });
   }, [clusters, sources]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!url.trim()) return;
-    const fallbackSource = buildFallbackSource(url, note);
+  function saveSharedSource(nextUrl: string, nextNote: string) {
+    const fallbackSource = buildFallbackSource(nextUrl, nextNote);
     setSources((current) => [fallbackSource, ...current]);
-    void captureUrl(url).then((result) => {
+    void captureUrl(nextUrl).then((result) => {
       setSources((current) =>
         current.map((source) =>
           source.id === fallbackSource.id ? mergeCaptureResult(source, result) : source,
         ),
       );
     });
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!url.trim()) return;
+    saveSharedSource(url, note);
     setUrl("");
     setNote("");
   }
@@ -335,6 +352,13 @@ function App() {
 
   function loadDemoMemory() {
     setSources(DEMO_SOURCES);
+  }
+
+  function simulateShareToLinkTrace() {
+    saveSharedSource(
+      "https://github.com/Q00/ouroboros",
+      "Shared from mobile sheet: spec loop repo to review later",
+    );
   }
 
   function changeClusterZoom(delta: number) {
@@ -523,6 +547,16 @@ function App() {
         ) : null}
 
         <p className="local-note">Demo data is stored locally in this browser.</p>
+
+        <section className="share-simulation" aria-label="Share to LinkTrace demo">
+          <div>
+            <h2>Share to LinkTrace</h2>
+            <p>Receive a link, save immediately, then review later in Today Brief and Memory Clusters.</p>
+          </div>
+          <button type="button" onClick={simulateShareToLinkTrace}>
+            Simulate share
+          </button>
+        </section>
 
         <form className="capture-form" onSubmit={handleSubmit}>
           <p className="capture-note">

@@ -125,6 +125,36 @@ h1 {
   background: #ffffff;
 }
 
+.share-simulation {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #cbdccc;
+  border-radius: 8px;
+  background: #eef5ee;
+}
+
+.share-simulation h2 {
+  font-size: 1rem;
+}
+
+.share-simulation p {
+  margin-top: 4px;
+  color: #506158;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.share-simulation button {
+  border-color: #1f6f5b;
+  background: #1f6f5b;
+  color: #ffffff;
+  padding: 0 12px;
+}
+
 .capture-form label {
   display: grid;
   gap: 7px;

@@ -1,6 +1,6 @@
 ---
 id: 013
-status: todo
+status: done
 title: "Add PWA share target capture path"
 ---
 
@@ -60,3 +60,9 @@ npm run build
 ## Hints
 
 - Use a route such as `/share` for incoming share data if supported.
+
+## Completion Notes
+
+- Files changed: `public/manifest.webmanifest`, `public/icon.svg`, `index.html`, `src/App.tsx`, `src/styles.css`, `doc/tickets/013-pwa-share-target.md`.
+- Checks run: `npm run build`; `rg -n "manifest|share_target|LinkTrace|/share|Share to LinkTrace|Simulate share|Receive a link|save immediately|review later|saveSharedSource|replaceState" index.html public/manifest.webmanifest public/icon.svg src/App.tsx src/styles.css`.
+- Added PWA manifest metadata with icon placeholder and `share_target` configuration, linked the manifest in `index.html`, added `/share` URL parameter handling that creates a source, and added a `Share to LinkTrace` simulation flow that demonstrates receive link, save immediately, and review later in Today Brief and Memory Clusters without login.

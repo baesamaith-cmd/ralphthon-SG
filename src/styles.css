@@ -189,6 +189,16 @@ h1 {
   padding: 0 12px;
 }
 
+.zoom-controls {
+  display: grid;
+  grid-template-columns: 44px 44px 68px;
+  gap: 6px;
+}
+
+.zoom-controls button {
+  padding: 0;
+}
+
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -337,7 +347,7 @@ h1 {
 
 .cluster-map {
   position: relative;
-  height: 164px;
+  height: 292px;
   margin-top: 14px;
   overflow: hidden;
   border-radius: 8px;
@@ -346,57 +356,76 @@ h1 {
     linear-gradient(rgba(44, 102, 89, 0.08) 1px, transparent 1px),
     #f4f7f1;
   background-size: 34px 34px;
+  cursor: grab;
+  touch-action: none;
 }
 
-.cluster-bubble {
+.cluster-space {
   position: absolute;
-  display: grid;
-  place-items: center;
-  gap: 3px;
-  width: 112px;
-  min-height: 72px;
-  border: 1px solid rgba(31, 111, 91, 0.22);
+  inset: 0;
+  transform-origin: 50% 50%;
+  transition: transform 140ms ease;
+}
+
+.cluster-label {
+  position: absolute;
+  display: inline-grid;
+  gap: 2px;
+  min-width: 104px;
+  min-height: 44px;
   border-radius: 8px;
-  background: #ffffff;
-  color: #21312b;
-  text-align: center;
-  box-shadow: 0 10px 24px rgba(31, 45, 39, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(33, 49, 43, 0.78);
+  padding: 8px 10px;
 }
 
-.cluster-bubble strong {
-  font-size: 0.92rem;
-}
-
-.cluster-bubble span {
-  color: #65736c;
+.cluster-label strong {
   font-size: 0.78rem;
 }
 
-.cluster-bubble em {
-  color: #1f6f5b;
+.cluster-label span {
+  color: #65736c;
   font-size: 0.68rem;
-  font-style: normal;
-  font-weight: 750;
 }
 
-.cluster-1 {
+.cluster-node {
+  position: absolute;
+  width: 94px;
+  min-height: 42px;
+  border-color: rgba(31, 111, 91, 0.2);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(31, 45, 39, 0.08);
+  color: #244d3f;
+  font-size: 0.74rem;
+  line-height: 1.15;
+  padding: 0 8px;
+  transform: translate(-50%, -50%);
+}
+
+.cluster-label-1 {
   left: 12px;
   top: 18px;
 }
 
-.cluster-2 {
+.cluster-label-2 {
   right: 16px;
   top: 36px;
 }
 
-.cluster-3 {
+.cluster-label-3 {
   left: 92px;
-  bottom: 14px;
+  bottom: 22px;
 }
 
-.cluster-4 {
+.cluster-label-4 {
   right: 28px;
-  bottom: 12px;
+  bottom: 24px;
+}
+
+.cluster-label-5,
+.cluster-label-6 {
+  left: 34%;
+  top: 46%;
 }
 
 @media (min-width: 760px) {

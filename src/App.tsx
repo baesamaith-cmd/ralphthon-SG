@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, TouchEvent, useEffect, useMemo, useRef, useState } from "react";
 import { buildFallbackSource, captureUrl, mergeCaptureResult } from "./capture";
 import { buildMemoryClusters } from "./clusters";
 import type { SourceItem } from "./types";
@@ -131,6 +131,13 @@ type SearchResult = {
   reasons: string[];
 };
 
+type ClusterNode = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+};
+
 function readStoredSources(): SourceItem[] {
   if (typeof window === "undefined") return [];
 
@@ -194,12 +201,20 @@ function searchSources(sources: SourceItem[], query: string): SearchResult[] {
     .slice(0, 5);
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
 function App() {
   const [sources, setSources] = useState<SourceItem[]>(readStoredSources);
   const [url, setUrl] = useState("");
   const [note, setNote] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSource, setSelectedSource] = useState<SourceItem | null>(null);
+  const [clusterZoom, setClusterZoom] = useState(1);
+  const [clusterPan, setClusterPan] = useState({ x: 0, y: 0 });
+  const dragStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
+  const pinchDistanceRef = useRef<number | null>(null);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
@@ -249,6 +264,45 @@ function App() {
 
   const searchResults = useMemo(() => searchSources(sources, searchQuery), [sources, searchQuery]);
 
+  const clusterNodes = useMemo<ClusterNode[]>(() => {
+    const sourceById = new Map(sources.map((source) => [source.id, source]));
+    const seen = new Set<string>();
+    const centers = [
+      { x: 24, y: 24 },
+      { x: 68, y: 28 },
+      { x: 36, y: 66 },
+      { x: 72, y: 68 },
+      { x: 50, y: 48 },
+    ];
+    const offsets = [
+      { x: -8, y: 0 },
+      { x: 8, y: -6 },
+      { x: 0, y: 10 },
+      { x: 10, y: 9 },
+      { x: -10, y: -9 },
+    ];
+
+    return clusters.flatMap((cluster, clusterIndex) => {
+      const center = centers[clusterIndex % centers.length];
+      return cluster.sourceIds
+        .filter((id) => {
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        })
+        .map((id, nodeIndex) => {
+          const source = sourceById.get(id);
+          const offset = offsets[nodeIndex % offsets.length];
+          return {
+            id,
+            label: (source?.recallCues[0] ?? cluster.sharedCues[0] ?? cluster.label).slice(0, 24),
+            x: clamp(center.x + offset.x, 10, 84),
+            y: clamp(center.y + offset.y, 12, 82),
+          };
+        });
+    });
+  }, [clusters, sources]);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!url.trim()) return;
@@ -271,6 +325,44 @@ function App() {
 
   function loadDemoMemory() {
     setSources(DEMO_SOURCES);
+  }
+
+  function changeClusterZoom(delta: number) {
+    setClusterZoom((current) => clamp(Number((current + delta).toFixed(2)), 0.5, 2));
+  }
+
+  function resetClusterView() {
+    setClusterZoom(1);
+    setClusterPan({ x: 0, y: 0 });
+    pinchDistanceRef.current = null;
+  }
+
+  function handleClusterPointerDown(clientX: number, clientY: number) {
+    dragStartRef.current = { x: clientX, y: clientY, panX: clusterPan.x, panY: clusterPan.y };
+  }
+
+  function handleClusterPointerMove(clientX: number, clientY: number) {
+    if (!dragStartRef.current) return;
+    const nextX = dragStartRef.current.panX + clientX - dragStartRef.current.x;
+    const nextY = dragStartRef.current.panY + clientY - dragStartRef.current.y;
+    setClusterPan({ x: clamp(nextX, -120, 120), y: clamp(nextY, -80, 80) });
+  }
+
+  function endClusterPointer() {
+    dragStartRef.current = null;
+  }
+
+  function handleClusterTouchMove(event: TouchEvent<HTMLDivElement>) {
+    if (event.touches.length !== 2) return;
+    const [first, second] = Array.from(event.touches);
+    const distance = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+
+    if (pinchDistanceRef.current) {
+      const delta = (distance - pinchDistanceRef.current) / 240;
+      setClusterZoom((current) => clamp(Number((current + delta).toFixed(2)), 0.5, 2));
+    }
+
+    pinchDistanceRef.current = distance;
   }
 
   return (
@@ -460,17 +552,69 @@ function App() {
 
         <section className="panel clusters-panel" aria-labelledby="clusters-title">
           <div className="section-heading">
-            <h2 id="clusters-title">Memory Clusters</h2>
-            <button>Open</button>
+            <div>
+              <h2 id="clusters-title">Memory Clusters</h2>
+              <p className="section-subtitle">{clusterNodes.length || "Demo"} cue nodes</p>
+            </div>
+            <div className="zoom-controls" aria-label="Cluster zoom controls">
+              <button type="button" onClick={() => changeClusterZoom(-0.25)}>
+                -
+              </button>
+              <button type="button" onClick={() => changeClusterZoom(0.25)}>
+                +
+              </button>
+              <button type="button" onClick={resetClusterView}>
+                Reset
+              </button>
+            </div>
           </div>
-          <div className="cluster-map" aria-label="Memory cluster preview without relationship lines">
-            {clusters.slice(0, 4).map((cluster, index) => (
-              <div className={`cluster-bubble cluster-${index + 1}`} key={cluster.id}>
-                <strong>{cluster.label}</strong>
-                <span>{cluster.sourceCount} links</span>
-                <em>{cluster.sharedCues.slice(0, 2).join(" · ")}</em>
-              </div>
-            ))}
+          <div
+            className="cluster-map"
+            aria-label="Zoomable Memory Clusters canvas without relationship lines"
+            onMouseDown={(event) => handleClusterPointerDown(event.clientX, event.clientY)}
+            onMouseMove={(event) => handleClusterPointerMove(event.clientX, event.clientY)}
+            onMouseLeave={endClusterPointer}
+            onMouseUp={endClusterPointer}
+            onTouchStart={(event) => {
+              if (event.touches.length === 1) {
+                handleClusterPointerDown(event.touches[0].clientX, event.touches[0].clientY);
+              }
+            }}
+            onTouchMove={(event) => {
+              if (event.touches.length === 1) {
+                handleClusterPointerMove(event.touches[0].clientX, event.touches[0].clientY);
+              }
+              handleClusterTouchMove(event);
+            }}
+            onTouchEnd={() => {
+              endClusterPointer();
+              pinchDistanceRef.current = null;
+            }}
+          >
+            <div
+              className="cluster-space"
+              style={{
+                transform: `translate(${clusterPan.x}px, ${clusterPan.y}px) scale(${clusterZoom})`,
+              }}
+            >
+              {clusters.map((cluster, index) => (
+                <div className={`cluster-label cluster-label-${index + 1}`} key={cluster.id}>
+                  <strong>{cluster.label}</strong>
+                  <span>{cluster.sourceCount} links</span>
+                </div>
+              ))}
+              {clusterNodes.map((node) => (
+                <button
+                  className="cluster-node"
+                  key={node.id}
+                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                  type="button"
+                  onClick={() => setSelectedSource(sources.find((source) => source.id === node.id) ?? null)}
+                >
+                  {node.label}
+                </button>
+              ))}
+            </div>
           </div>
         </section>
       </section>

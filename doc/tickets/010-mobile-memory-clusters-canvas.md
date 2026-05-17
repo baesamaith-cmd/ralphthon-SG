@@ -1,6 +1,6 @@
 ---
 id: 010
-status: todo
+status: done
 title: "Build zoomable mobile Memory Clusters canvas"
 ---
 
@@ -66,3 +66,9 @@ npm run build
 
 - Use distance, color, opacity, node size, and cluster labels instead of lines.
 - A simple deterministic layout is acceptable for MVP.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/010-mobile-memory-clusters-canvas.md`.
+- Checks run: `npm run build`; `rg -n "clusterZoom|clusterPan|pinchDistance|zoom-controls|Reset|0\\.5|2\\)|cluster-node|cluster-label|touch-action: none|relationship lines|Zoomable Memory Clusters|slice\\(0, 24\\)" src/App.tsx src/styles.css`.
+- Replaced the static cluster preview with a zoomable mobile canvas that renders cluster labels and source cue nodes, omits relationship lines, supports drag pan, handles two-touch pinch scaling, provides `-`, `+`, and `Reset` controls from 0.5x to 2x, and keeps canvas node labels to 24 characters or less.

@@ -246,6 +246,52 @@ function captureQuality(source: SourceItem) {
   }
 }
 
+function generateContextBundle(sources: SourceItem[], clusters: ReturnType<typeof buildMemoryClusters>) {
+  const activeSources = sources.slice(0, 10);
+  const themes = clusters
+    .filter((cluster) => !cluster.isUnclustered)
+    .slice(0, 5)
+    .map((cluster) => `- ${cluster.label}: ${cluster.sharedCues.slice(0, 3).join(", ")}`);
+  const summaries = activeSources.map(
+    (source) =>
+      `- [${source.title}](${source.finalUrl || source.url}) — ${source.summary} Cues: ${source.recallCues.join(", ")}.`,
+  );
+  const cues = Array.from(new Set(activeSources.flatMap((source) => source.recallCues))).slice(0, 12);
+  const links = activeSources.map((source) => `- ${source.title}: ${source.finalUrl || source.url}`);
+  const openQuestions = [
+    "- Which saved links need deeper reading before the next decision?",
+    "- Which weakly clustered sources should become a new theme?",
+    "- Which blocked or link-only sources need manual context or screenshots?",
+  ];
+  const prompts = [
+    "- Summarize these sources into a 5-minute briefing with source citations.",
+    "- Turn the recall cues into a study plan for tomorrow.",
+    "- Identify which links are related and which one I should open first.",
+  ];
+
+  return [
+    "# LinkTrace Context Bundle",
+    "",
+    "## Top Themes",
+    themes.length ? themes.join("\n") : "- No themes yet. Load demo memory or save links first.",
+    "",
+    "## Saved Source Summaries",
+    summaries.length ? summaries.join("\n") : "- No saved source summaries yet.",
+    "",
+    "## Recall Cues",
+    cues.length ? cues.map((cue) => `- ${cue}`).join("\n") : "- No recall cues yet.",
+    "",
+    "## Important Links",
+    links.length ? links.join("\n") : "- No links yet.",
+    "",
+    "## Open Questions",
+    openQuestions.join("\n"),
+    "",
+    "## Suggested Next Prompts",
+    prompts.join("\n"),
+  ].join("\n");
+}
+
 function App() {
   const [sources, setSources] = useState<SourceItem[]>(readStoredSources);
   const [url, setUrl] = useState("");
@@ -253,6 +299,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSource, setSelectedSource] = useState<SourceItem | null>(null);
   const [selectedClusterId, setSelectedClusterId] = useState<string | null>(null);
+  const [contextBundle, setContextBundle] = useState("");
+  const [copyState, setCopyState] = useState("Copy Markdown");
   const [clusterZoom, setClusterZoom] = useState(1);
   const [clusterPan, setClusterPan] = useState({ x: 0, y: 0 });
   const dragStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
@@ -400,6 +448,17 @@ function App() {
       "https://github.com/Q00/ouroboros",
       "Shared from mobile sheet: spec loop repo to review later",
     );
+  }
+
+  function handleGenerateContextBundle() {
+    setContextBundle(generateContextBundle(sources, clusters));
+    setCopyState("Copy Markdown");
+  }
+
+  async function handleCopyContextBundle() {
+    if (!contextBundle) return;
+    await navigator.clipboard?.writeText(contextBundle);
+    setCopyState("Copied");
   }
 
   function changeClusterZoom(delta: number) {
@@ -636,6 +695,26 @@ function App() {
           <button type="button" onClick={simulateShareToLinkTrace}>
             Simulate share
           </button>
+        </section>
+
+        <section className="context-bundle" aria-label="Agent context bundle">
+          <div className="section-heading">
+            <div>
+              <h2>Agent Context Bundle</h2>
+              <p className="section-subtitle">Source-backed memory for future AI work</p>
+            </div>
+            <button type="button" onClick={handleGenerateContextBundle}>
+              Generate
+            </button>
+          </div>
+          {contextBundle ? (
+            <>
+              <textarea readOnly value={contextBundle} aria-label="Generated context bundle Markdown" />
+              <button type="button" onClick={handleCopyContextBundle}>
+                {copyState}
+              </button>
+            </>
+          ) : null}
         </section>
 
         <form className="capture-form" onSubmit={handleSubmit}>

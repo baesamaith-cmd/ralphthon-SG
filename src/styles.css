@@ -155,6 +155,27 @@ h1 {
   padding: 0 12px;
 }
 
+.context-bundle {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #dbe1d8;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.context-bundle textarea {
+  width: 100%;
+  min-height: 180px;
+  resize: vertical;
+  border: 1px solid #c7d0c6;
+  border-radius: 8px;
+  padding: 12px;
+  color: #25322d;
+  font: 0.78rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 .capture-form label {
   display: grid;
   gap: 7px;

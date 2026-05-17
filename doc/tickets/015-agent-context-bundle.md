@@ -1,6 +1,6 @@
 ---
 id: 015
-status: todo
+status: done
 title: "Generate context bundle from saved links"
 ---
 
@@ -53,6 +53,13 @@ LinkTrace should connect personal memory to future AI work. Users should be able
 ```bash
 npm run build
 ```
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/015-agent-context-bundle.md`.
+- Checks run: `npm run build`; `rg -n "Generate context bundle|Agent Context Bundle|LinkTrace Context Bundle|Top Themes|Saved Source Summaries|Recall Cues|Important Links|Open Questions|Suggested Next Prompts|Copy Markdown|navigator.clipboard|contextBundle" src/App.tsx src/styles.css`.
+- Added a deterministic, source-backed Markdown context bundle with top themes, saved summaries, recall cues, important links, open questions, and suggested next prompts.
+- Added a mobile-friendly preview textarea and copy-as-Markdown action while keeping the feature secondary to the main ordinary-user link memory flow.
 
 ## Constraints
 

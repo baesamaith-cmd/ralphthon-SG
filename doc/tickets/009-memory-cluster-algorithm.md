@@ -1,6 +1,6 @@
 ---
 id: 009
-status: todo
+status: done
 title: "Group links into memory clusters"
 ---
 
@@ -62,3 +62,9 @@ npm run build
 ## Hints
 
 - Start with deterministic overlap scoring. Embeddings can be a later improvement.
+
+## Completion Notes
+
+- Files changed: `src/clusters.ts`, `src/App.tsx`, `src/styles.css`, `doc/cluster-fixtures.md`, `doc/tickets/009-memory-cluster-algorithm.md`.
+- Checks run: `npm run build`; `rg -n "buildMemoryClusters|similarityScore|sharedCues|sourceIds|Unclustered|sourceCount|labelFor|overlap|Memory Clusters" src/clusters.ts src/App.tsx`.
+- Added deterministic overlap scoring across recall cues, tags, title terms, and summary terms. The cluster builder outputs memory-like labels, shared cues, source counts, source IDs, and an `Unclustered` group. The demo fixture documents at least three plausible named clusters plus weakly clustered sources.

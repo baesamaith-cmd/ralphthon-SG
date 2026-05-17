@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { buildFallbackSource, captureUrl, mergeCaptureResult } from "./capture";
+import { buildMemoryClusters } from "./clusters";
 import type { SourceItem } from "./types";
 
 const STORAGE_KEY = "linktrace.sources";
@@ -124,12 +125,6 @@ const DEMO_SOURCES: SourceItem[] = [
   },
 ];
 
-const fallbackClusters = [
-  { name: "AI tools", count: 3 },
-  { name: "Personal systems", count: 2 },
-  { name: "Community links", count: 2 },
-];
-
 type SearchResult = {
   source: SourceItem;
   score: number;
@@ -223,21 +218,33 @@ function App() {
   }, [sources]);
 
   const clusters = useMemo(() => {
-    if (sources.length === 0) return fallbackClusters;
+    if (sources.length === 0) {
+      return [
+        {
+          id: "preview-ai",
+          label: "AI memory",
+          sharedCues: ["ai", "workflow"],
+          sourceCount: 3,
+          sourceIds: [],
+        },
+        {
+          id: "preview-learning",
+          label: "learning trail",
+          sharedCues: ["learning", "career"],
+          sourceCount: 2,
+          sourceIds: [],
+        },
+        {
+          id: "preview-community",
+          label: "community signals",
+          sharedCues: ["community", "event"],
+          sourceCount: 2,
+          sourceIds: [],
+        },
+      ];
+    }
 
-    const groups = [
-      { name: "AI + agents", tags: ["ai", "agent", "workflow"] },
-      { name: "Learning + career", tags: ["learning", "career"] },
-      { name: "Community signals", tags: ["community", "event", "social"] },
-      { name: "Weakly clustered", tags: ["unclustered"] },
-    ];
-
-    return groups
-      .map((group) => ({
-        name: group.name,
-        count: sources.filter((source) => group.tags.some((tag) => source.tags.includes(tag))).length,
-      }))
-      .filter((group) => group.count > 0);
+    return buildMemoryClusters(sources);
   }, [sources]);
 
   const searchResults = useMemo(() => searchSources(sources, searchQuery), [sources, searchQuery]);
@@ -458,9 +465,10 @@ function App() {
           </div>
           <div className="cluster-map" aria-label="Memory cluster preview without relationship lines">
             {clusters.slice(0, 4).map((cluster, index) => (
-              <div className={`cluster-bubble cluster-${index + 1}`} key={cluster.name}>
-                <strong>{cluster.name}</strong>
-                <span>{cluster.count} links</span>
+              <div className={`cluster-bubble cluster-${index + 1}`} key={cluster.id}>
+                <strong>{cluster.label}</strong>
+                <span>{cluster.sourceCount} links</span>
+                <em>{cluster.sharedCues.slice(0, 2).join(" · ")}</em>
               </div>
             ))}
           </div>

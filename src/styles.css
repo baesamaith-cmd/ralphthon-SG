@@ -372,6 +372,13 @@ h1 {
   font-size: 0.78rem;
 }
 
+.cluster-bubble em {
+  color: #1f6f5b;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 750;
+}
+
 .cluster-1 {
   left: 12px;
   top: 18px;

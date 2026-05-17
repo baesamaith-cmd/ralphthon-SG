@@ -344,6 +344,17 @@ function App() {
   }, [sources]);
 
   useEffect(() => {
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setSelectedSource(null);
+      setSelectedClusterId(null);
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sharedUrl = params.get("url") || params.get("text") || "";
     const sharedTitle = params.get("title") || "Shared to LinkTrace";
@@ -711,7 +722,7 @@ function App() {
         ) : null}
 
         {selectedSource ? (
-          <section className="panel detail-panel" aria-label="Source detail">
+          <section className="panel detail-panel" aria-label="Source detail" role="dialog" aria-modal="false">
             <div className="section-heading">
               <h2>Source Detail</h2>
               <button type="button" onClick={() => setSelectedSource(null)}>
@@ -993,47 +1004,58 @@ function App() {
         </section>
 
         {selectedCluster ? (
-          <section className="bottom-sheet" aria-label="Selected memory cluster">
-            <div className="sheet-handle" aria-hidden="true" />
-            <div className="section-heading">
-              <div>
-                <p className="cue-label">Selected cue</p>
-                <h2>{selectedCluster.label}</h2>
-                <p className="section-subtitle">{selectedCluster.sourceCount} related sources</p>
-              </div>
-              <button type="button" onClick={() => setSelectedClusterId(null)}>
-                Close
-              </button>
-            </div>
-            <div className="mini-chip-row" aria-label="Shared cues">
-              {selectedCluster.sharedCues.slice(0, 4).map((cue) => (
-                <span className="mini-chip" key={cue}>
-                  {cue}
-                </span>
-              ))}
-            </div>
-            <div className="sheet-source-list">
-              {selectedClusterSources.map((source) => (
-                <button
-                  className="sheet-source"
-                  key={source.id}
-                  type="button"
-                  onClick={() => setSelectedSource(source)}
-                >
-                  <h3>{source.title}</h3>
-                  <p>{source.summary}</p>
-                  <p className="cue-label">Find later by</p>
-                  <div className="mini-chip-row">
-                    {source.recallCues.map((cue) => (
-                      <span className="mini-chip" key={cue}>
-                        {cue}
-                      </span>
-                    ))}
-                  </div>
+          <>
+            <button
+              aria-label="Close selected memory cluster"
+              className="modal-backdrop"
+              type="button"
+              onClick={() => setSelectedClusterId(null)}
+            />
+            <section className="bottom-sheet" aria-label="Selected memory cluster" role="dialog" aria-modal="true">
+              <div className="sheet-handle" aria-hidden="true" />
+              <div className="section-heading">
+                <div>
+                  <p className="cue-label">Selected cue</p>
+                  <h2>{selectedCluster.label}</h2>
+                  <p className="section-subtitle">{selectedCluster.sourceCount} related sources</p>
+                </div>
+                <button type="button" onClick={() => setSelectedClusterId(null)}>
+                  Close
                 </button>
-              ))}
-            </div>
-          </section>
+              </div>
+              <div className="mini-chip-row" aria-label="Shared cues">
+                {selectedCluster.sharedCues.slice(0, 4).map((cue) => (
+                  <span className="mini-chip" key={cue}>
+                    {cue}
+                  </span>
+                ))}
+              </div>
+              <div className="sheet-source-list">
+                {selectedClusterSources.map((source) => (
+                  <button
+                    className="sheet-source"
+                    key={source.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedSource(source);
+                      setSelectedClusterId(null);
+                    }}
+                  >
+                    <h3>{source.title}</h3>
+                    <p>{source.summary}</p>
+                    <p className="cue-label">Find later by</p>
+                    <div className="mini-chip-row">
+                      {source.recallCues.map((cue) => (
+                        <span className="mini-chip" key={cue}>
+                          {cue}
+                        </span>
+                      ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </>
         ) : null}
       </section>
     </main>

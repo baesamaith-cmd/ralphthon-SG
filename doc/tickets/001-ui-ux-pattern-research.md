@@ -1,6 +1,6 @@
 ---
 id: 001-ui
-status: todo
+status: done
 title: "Research and choose mobile UI/UX patterns"
 ---
 
@@ -72,3 +72,8 @@ rg -n "Chosen UI Principles|bottom sheet|cue chips|44px|no relationship lines" d
 - Favor patterns that work with thumbs: chips, cards, bottom sheets, sticky search, and simple pan/zoom controls.
 - Treat this as pattern selection for a demo, not an exhaustive design audit.
 
+## Completion Notes
+
+- Files changed: `doc/ux-research.md`, `doc/tickets/001-ui-ux-pattern-research.md`.
+- Checks run: `rg -n "Chosen UI Principles|bottom sheet|cue chips|44px|no relationship lines" doc/ux-research.md`; word count check with `wc -w doc/ux-research.md`.
+- Added seven mobile pattern reviews, eight chosen UI principles, and concrete implementation decisions for app shell, Today Brief, Memory Clusters, bottom sheets, and final polish.

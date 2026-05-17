@@ -178,6 +178,13 @@ h1 {
   font-size: 1.08rem;
 }
 
+.section-subtitle {
+  margin-top: 3px;
+  color: #66736a;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .section-heading button {
   padding: 0 12px;
 }
@@ -233,6 +240,13 @@ h1 {
   line-height: 1.35;
 }
 
+.source-card .summary-line {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .source-card .fallback-reason {
   margin-top: 0;
   border-left: 3px solid #d6c766;
@@ -267,7 +281,7 @@ h1 {
   font-weight: 700;
 }
 
-.source-card > span {
+.source-card > .quality-badge {
   width: fit-content;
   min-height: 28px;
   display: inline-flex;

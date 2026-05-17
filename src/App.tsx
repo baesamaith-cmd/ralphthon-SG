@@ -157,6 +157,13 @@ function App() {
     return cues.length > 0 ? cues : ["AI summaries", "sleep habit", "open-source notes"];
   }, [sources]);
 
+  const todaySources = useMemo(() => {
+    const today = new Date().toDateString();
+    return sources
+      .filter((source) => new Date(source.createdAt).toDateString() === today)
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  }, [sources]);
+
   const clusters = useMemo(() => {
     if (sources.length === 0) return fallbackClusters;
 
@@ -275,24 +282,33 @@ function App() {
 
         <section className="panel" aria-labelledby="brief-title">
           <div className="section-heading">
-            <h2 id="brief-title">Today Brief</h2>
+            <div>
+              <h2 id="brief-title">Today Brief</h2>
+              <p className="section-subtitle">{todaySources.length} saved today</p>
+            </div>
             <button type="button" onClick={loadDemoMemory}>
               Load demo memory
             </button>
           </div>
-          {sources.length === 0 ? (
+          {todaySources.length === 0 ? (
             <div className="empty-state">
               <h3>Shared links will appear here.</h3>
-              <p>Paste a link above to save it locally before metadata capture runs.</p>
+              <p>Paste a link above or load demo memory to see today's saved links.</p>
             </div>
           ) : (
             <div className="brief-list">
-              {sources.map((item) => (
+              {todaySources.map((item) => (
                 <article className="source-card" key={item.id}>
                   <div>
                     <h3>{item.title}</h3>
-                    <p>{item.summary}</p>
-                    <small>{item.failureReason ? `${item.domain} · ${item.failureReason}` : item.domain}</small>
+                    <p className="summary-line">{item.summary}</p>
+                    <small>
+                      {item.domain} · {new Date(item.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      {item.failureReason ? ` · ${item.failureReason}` : ""}
+                    </small>
                     <p className="cue-label">Find later by</p>
                     <div className="mini-chip-row" aria-label={`Recall cues for ${item.title}`}>
                       {item.recallCues.map((cue) => (
@@ -302,7 +318,7 @@ function App() {
                       ))}
                     </div>
                   </div>
-                  <span>{item.captureStatus}</span>
+                  <span className="quality-badge">{item.captureStatus}</span>
                   {item.failureReason ? (
                     <p className="fallback-reason">
                       LinkTrace saved this with the capture fallback ladder.

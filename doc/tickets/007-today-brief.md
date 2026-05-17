@@ -1,6 +1,6 @@
 ---
 id: 007
-status: todo
+status: done
 title: "Build Today Brief"
 ---
 
@@ -64,3 +64,9 @@ npm run build
 ## Hints
 
 - Use a bottom sheet or detail view for expanded summaries.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/007-today-brief.md`.
+- Checks run: `npm run build`; `rg -n "Today Brief|saved today|todaySources|summary-line|quality-badge|Find later by|Load demo memory|Shared links will appear here|toLocaleTimeString" src/App.tsx src/styles.css`.
+- Today Brief now filters to sources saved on the current day, sorts them newest first, shows the saved count, renders compact cards with title, domain/time, one-line/two-row-clamped summary, `Find later by` recall cues, and capture quality badges, and keeps an empty state inviting users to paste a link or load demo memory.

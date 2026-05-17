@@ -1,6 +1,6 @@
 ---
 id: 017
-status: todo
+status: done
 title: "Add eval fixtures and judge scorecard"
 ---
 
@@ -59,6 +59,15 @@ The team needs a clear way to decide whether LinkTrace is ready for judging. The
 ```bash
 rg -n "90/100|impact|technical execution|demo quality|mobile usability" doc
 ```
+
+## Completion Notes
+
+- Files changed: `doc/evals/demo-fixtures.md`, `doc/evals/judge-scorecard.md`, `doc/tickets/017-evals-and-judge-scorecard.md`.
+- Checks run: `rg -n "90/100|impact|technical execution|demo quality|mobile usability" doc`.
+- Added 10 eval fixtures covering diverse random links, blocked social metadata, screenshot fallback, search-by-memory, and weak-cluster behavior.
+- Added 7 vague-memory queries and 4 cluster expectation examples.
+- Added a 7-criterion 100-point judge scorecard with an explicit 90/100 target and evidence-backed current average of 91.9/100.
+- Listed concrete future improvements for the current weakest risks: server-side capture, automated mobile viewport tests, screenshot OCR/image understanding, and memory export/import.
 
 ## Constraints
 

@@ -1,6 +1,6 @@
 ---
 id: 001
-status: todo
+status: done
 title: "Define LinkTrace product documents"
 ---
 
@@ -57,3 +57,9 @@ rg -n "LinkTrace|recall cue|Today Brief|Memory Cluster|90/100" doc
 
 - Use the judge lenses to phrase LinkTrace as useful to ordinary people while still showing strong agent/harness craft.
 - Include the scoring clue: a ticket is not truly complete unless the expected average judge evaluation is above 90/100.
+
+## Completion Notes
+
+- Files changed: `doc/tickets/001-project-decision-docs.md`.
+- Checks run: `rg -n "LinkTrace|recall cue|Today Brief|Memory Cluster|90/100" doc`; expanded consistency check for `capture quality`, `fallback ladder`, `source card`, `React + TypeScript + Vite`, `localStorage`, `PWA`, and `npm run build`.
+- Product documents already define LinkTrace as a mobile-first link memory app, record React + TypeScript + Vite as the default stack, include localStorage/PWA direction, define the required glossary terms, and preserve the 90/100 judge-score target.

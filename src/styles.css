@@ -228,6 +228,35 @@ h1 {
   background: #ffffff;
 }
 
+.result-card {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid #dbe1d8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e2a25;
+  text-align: left;
+}
+
+.result-card strong {
+  font-size: 0.96rem;
+}
+
+.result-card span {
+  color: #596960;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.result-card small {
+  color: #1f6f5b;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
 .source-card h3 {
   font-size: 0.98rem;
 }

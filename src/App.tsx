@@ -130,6 +130,12 @@ const fallbackClusters = [
   { name: "Community links", count: 2 },
 ];
 
+type SearchResult = {
+  source: SourceItem;
+  score: number;
+  reasons: string[];
+};
+
 function readStoredSources(): SourceItem[] {
   if (typeof window === "undefined") return [];
 
@@ -143,10 +149,62 @@ function readStoredSources(): SourceItem[] {
   }
 }
 
+function includesAny(value: string, query: string, tokens: string[]) {
+  const normalized = value.toLowerCase();
+  return normalized.includes(query) || tokens.some((token) => normalized.includes(token));
+}
+
+function searchSources(sources: SourceItem[], query: string): SearchResult[] {
+  const normalizedQuery = query.toLowerCase().trim();
+  if (!normalizedQuery) return [];
+
+  const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+
+  return sources
+    .map((source) => {
+      let score = 0;
+      const reasons: string[] = [];
+      const cueMatch = source.recallCues.find((cue) => includesAny(cue, normalizedQuery, tokens));
+
+      if (cueMatch) {
+        score += 8;
+        reasons.push(`cue: ${cueMatch}`);
+      }
+
+      if (includesAny(source.title, normalizedQuery, tokens)) {
+        score += 5;
+        reasons.push("title");
+      }
+
+      if (includesAny(source.summary, normalizedQuery, tokens)) {
+        score += 3;
+        reasons.push("summary");
+      }
+
+      const tagMatch = source.tags.find((tag) => includesAny(tag, normalizedQuery, tokens));
+      if (tagMatch) {
+        score += 3;
+        reasons.push(`tag: ${tagMatch}`);
+      }
+
+      if (includesAny(source.domain, normalizedQuery, tokens)) {
+        score += 2;
+        reasons.push(`domain: ${source.domain}`);
+      }
+
+      return { source, score, reasons };
+    })
+    .filter((result) => result.score > 0)
+    .sort((a, b) => b.score - a.score || Date.parse(b.source.createdAt) - Date.parse(a.source.createdAt))
+    .slice(0, 5);
+}
+
 function App() {
   const [sources, setSources] = useState<SourceItem[]>(readStoredSources);
   const [url, setUrl] = useState("");
   const [note, setNote] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSource, setSelectedSource] = useState<SourceItem | null>(null);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
@@ -181,6 +239,8 @@ function App() {
       }))
       .filter((group) => group.count > 0);
   }, [sources]);
+
+  const searchResults = useMemo(() => searchSources(sources, searchQuery), [sources, searchQuery]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -227,8 +287,69 @@ function App() {
             type="search"
             placeholder="Search by what you remember..."
             aria-label="Search by what you remember"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
           />
         </label>
+
+        {searchQuery.trim() ? (
+          <section className="panel search-panel" aria-label="Memory search results">
+            <div className="section-heading">
+              <div>
+                <h2>Search Results</h2>
+                <p className="section-subtitle">{searchResults.length} matches</p>
+              </div>
+            </div>
+            {searchResults.length === 0 ? (
+              <div className="empty-state">
+                <h3>No memory match yet.</h3>
+                <p>Try a cue like `agent memory`, `sleep timing`, or load demo memory first.</p>
+              </div>
+            ) : (
+              <div className="brief-list">
+                {searchResults.map((result) => (
+                  <button
+                    className="result-card"
+                    key={result.source.id}
+                    type="button"
+                    onClick={() => setSelectedSource(result.source)}
+                  >
+                    <strong>{result.source.title}</strong>
+                    <span>{result.source.summary}</span>
+                    <small>Why this matched: {result.reasons.join(", ")}</small>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : null}
+
+        {selectedSource ? (
+          <section className="panel detail-panel" aria-label="Source detail">
+            <div className="section-heading">
+              <h2>Source Detail</h2>
+              <button type="button" onClick={() => setSelectedSource(null)}>
+                Close
+              </button>
+            </div>
+            <article className="source-card">
+              <div>
+                <h3>{selectedSource.title}</h3>
+                <p>{selectedSource.summary}</p>
+                <small>{selectedSource.domain}</small>
+                <p className="cue-label">Find later by</p>
+                <div className="mini-chip-row">
+                  {selectedSource.recallCues.map((cue) => (
+                    <span className="mini-chip" key={cue}>
+                      {cue}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <span className="quality-badge">{selectedSource.captureStatus}</span>
+            </article>
+          </section>
+        ) : null}
 
         <p className="local-note">Demo data is stored locally in this browser.</p>
 

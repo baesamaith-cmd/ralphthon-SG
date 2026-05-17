@@ -1,6 +1,6 @@
 ---
 id: 008
-status: todo
+status: done
 title: "Search saved links by memory"
 ---
 
@@ -62,3 +62,9 @@ npm run build
 ## Hints
 
 - Simple weighted keyword matching is acceptable if recall cues are good.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/search-fixtures.md`, `doc/tickets/008-memory-search.md`.
+- Checks run: `npm run build`; `rg -n "Search by what you remember|searchSources|Why this matched|Source Detail|agent memory|watch later|sleep timing|career growth|login gated|title|summary|recallCues|tags|domain" src/App.tsx doc/search-fixtures.md`.
+- Added responsive cue-weighted memory search over title, summary, recall cues, tags, and domain. Results show `Why this matched`, stay local/offline for demo data, and open a source detail panel when tapped. Documented five vague-memory search fixtures covering agent memory, watch-later video, sleep timing, career growth, and login-gated social fallback.

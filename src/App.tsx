@@ -631,6 +631,40 @@ function App() {
           </button>
         </header>
 
+        <form className="capture-form" ref={captureRef} onSubmit={handleSubmit}>
+          <p className="capture-note">
+            Paste a URL or a shared message containing a URL. LinkTrace saves first, then checks metadata.
+          </p>
+          {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
+          <label htmlFor="source-url">
+            <span>Save a link</span>
+            <input
+              id="source-url"
+              inputMode="url"
+              placeholder="Paste a URL..."
+              type="text"
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+            />
+          </label>
+          <label htmlFor="source-note">
+            <span>Optional note</span>
+            <input
+              id="source-note"
+              placeholder="Why will this matter later?"
+              type="text"
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+            />
+          </label>
+          <div className="form-actions">
+            <button type="submit">Save link</button>
+            <button type="button" onClick={clearSources}>
+              Clear demo data
+            </button>
+          </div>
+        </form>
+
         <label className="search-label" htmlFor="memory-search">
           <span>Memory search</span>
           <input
@@ -937,40 +971,6 @@ function App() {
             Simulate share
           </button>
         </section>
-
-        <form className="capture-form" ref={captureRef} onSubmit={handleSubmit}>
-          <p className="capture-note">
-            Paste a URL or a shared message containing a URL. LinkTrace saves first, then checks metadata.
-          </p>
-          {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
-          <label htmlFor="source-url">
-            <span>Save a link</span>
-            <input
-              id="source-url"
-              inputMode="url"
-              placeholder="Paste a URL..."
-              type="text"
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-            />
-          </label>
-          <label htmlFor="source-note">
-            <span>Optional note</span>
-            <input
-              id="source-note"
-              placeholder="Why will this matter later?"
-              type="text"
-              value={note}
-              onChange={(event) => setNote(event.target.value)}
-            />
-          </label>
-          <div className="form-actions">
-            <button type="submit">Save link</button>
-            <button type="button" onClick={clearSources}>
-              Clear demo data
-            </button>
-          </div>
-        </form>
 
         <section className="context-bundle" aria-label="Agent context bundle">
           <div className="section-heading">

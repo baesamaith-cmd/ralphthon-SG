@@ -198,6 +198,20 @@ async function tryOembed(url: URL): Promise<CaptureResult | null> {
   };
 }
 
+async function tryServerCapture(url: URL): Promise<CaptureResult | null> {
+  const response = await fetch(`/api/capture?url=${encodeURIComponent(url.href)}`, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS + 2500),
+  });
+  if (!response.ok) return null;
+  const result = (await response.json()) as CaptureResult;
+  return {
+    ...result,
+    finalUrl: result.finalUrl || url.href,
+    domain: result.domain === "manual source" ? getDomain(url.href) : result.domain,
+    title: result.title === "Link saved with fallback" ? titleFromUrl(url.href) : result.title,
+  };
+}
+
 export function buildFallbackSource(urlInput: string, noteInput: string): SourceItem {
   const url = normalizeUrl(urlInput);
   const domain = getDomain(url);
@@ -246,15 +260,22 @@ export async function captureUrl(urlInput: string): Promise<CaptureResult> {
     };
   }
 
-  const platformResult = platformFallback(parsed);
-  if (platformResult) return platformResult;
-
   try {
     const oembedResult = await tryOembed(parsed);
     if (oembedResult) return oembedResult;
   } catch {
     // Fall through to normal metadata capture; oEmbed is an enhancement, not a hard dependency.
   }
+
+  try {
+    const serverResult = await tryServerCapture(parsed);
+    if (serverResult) return serverResult;
+  } catch {
+    // Fall through to platform and browser capture; the dev server API may not exist in static builds.
+  }
+
+  const platformResult = platformFallback(parsed);
+  if (platformResult) return platformResult;
 
   try {
     const response = await fetch(parsed.href, {

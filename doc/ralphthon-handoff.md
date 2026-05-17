@@ -1,6 +1,6 @@
 # Ralphthon Handoff
 
-This repository is prepared for tomorrow's LinkTrace Ralphthon.
+This repository is prepared for the LinkTrace Ralphthon currently running on **17 May 2026**.
 
 ## How To Resume
 
@@ -22,7 +22,7 @@ Do not begin unrelated implementation outside the ticket queue.
 ## Current State
 
 - The repository is now aligned around LinkTrace.
-- The important artifact for tomorrow is a demo-first Ralph loop that keeps producing a usable result.
+- The important artifact for 17 May 2026 is a demo-first Ralph loop that keeps producing a usable result.
 - Judge-oriented planning notes live in `doc/judge-lenses.md`.
 - Verification commands should include `npm run build` once the app stack exists.
 
@@ -30,7 +30,7 @@ Do not begin unrelated implementation outside the ticket queue.
 
 The Ralph loop should work even when the agent starts with fresh context. The project therefore stores product intent, non-goals, glossary, architecture, tickets, and loop rules inside the repository.
 
-Tomorrow, those documents can be refined, but the loop should not restart from a blank idea.
+During Ralphthon on 17 May 2026, those documents can be refined, but the loop should not restart from a blank idea.
 
 ## Ralphthon Plan
 

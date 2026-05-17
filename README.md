@@ -12,15 +12,17 @@ LinkTrace Loop
 
 LinkTrace is a personal link memory for people who save useful links before they have time to read them. It extracts what it can, explains why capture failed when links are blocked or hard to parse, offers manual and screenshot fallbacks, and later helps users rediscover saved information through Today Brief, vague-memory search, and clustered visual summaries.
 
-## Tomorrow's Flow
+## Ralphthon Flow - 17 May 2026
 
-1. Spend 30 minutes refining `doc/interview.md` with a human and/or LLM.
+Ralphthon is in progress today, **17 May 2026**. Use this flow during the live event:
+
+1. Spend 30 minutes refining `doc/interview.md` with a human and/or LLM if the scope still feels ambiguous.
 2. Read `doc/judge-lenses.md` and use it to pressure-test LinkTrace from the judges' likely perspectives.
 3. Keep `doc/product.md`, `doc/non-goals.md`, `doc/glossary.md`, and `doc/architecture.md` aligned with the demo goal.
 4. Execute the numbered tickets in `doc/tickets/`.
 5. Make sure every completed ticket records `Acceptance`, `Verification`, fallback status, and follow-up notes.
 6. Keep `doc/ralph-loop.md` as the operating prompt.
-7. Run ticket 001 as the dry run if the setup needs to be revalidated.
+7. Run ticket 001 as the dry run only if the setup needs to be revalidated today.
 8. During the code-touch-ban phase, only run the loop.
 
 ## Start Prompt

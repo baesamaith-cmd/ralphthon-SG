@@ -1,8 +1,8 @@
 # Judge Lenses
 
-Research date: 2026-05-16
+Research date: 2026-05-17
 
-Purpose: help tomorrow's Ralphthon idea-generation and interview phase account for the likely interests of the judges. This is not a scoring guarantee. It is a set of working hypotheses based on public profiles, public posts, and the event page.
+Purpose: help today's Ralphthon idea-generation, implementation, and demo decisions account for the likely interests of the judges on 17 May 2026. This is not a scoring guarantee. It is a set of working hypotheses based on public profiles, public posts, and the event page.
 
 ## Event Rubric
 
@@ -229,9 +229,9 @@ Project-shaping advice:
 
 ## Combined Judge Lens For Idea Generation
 
-When generating ideas tomorrow, score each idea against these questions:
+When making product and implementation decisions on 17 May 2026, score each idea against these questions:
 
-1. Impact: Who urgently needs this, and what changes for them tomorrow?
+1. Impact: Who urgently needs this, and what changes for them during the 17 May 2026 demo?
 2. Technical execution: Can the agent build a credible working version during the loop?
 3. Originality: Is this more than a generic wrapper?
 4. Demo quality: Can it be shown clearly in under three minutes?

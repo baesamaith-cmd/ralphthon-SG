@@ -2,7 +2,7 @@
 
 This is the operating plan for the LinkTrace Ralphthon.
 
-The goal is to use this repository as a demo-first Ralph loop workspace for LinkTrace. The project direction is already chosen; tomorrow's work should refine scope, execute tickets, and preserve a working demo through graceful fallbacks.
+The goal is to use this repository as a demo-first Ralph loop workspace for LinkTrace during Ralphthon on **17 May 2026**. The project direction is already chosen; today's work should refine scope, execute tickets, and preserve a working demo through graceful fallbacks.
 
 ## The Seven-Step Plan
 
@@ -151,7 +151,7 @@ Once the ban starts:
 - If the agent misses a quality target but preserves a demoable fallback, it records `done-with-follow-up` and keeps moving.
 - If the agent is blocked because build or minimum demo viability fails, it records the blocker in the ticket instead of guessing.
 
-## Recommended Start Prompt For Tomorrow
+## Recommended Start Prompt For 17 May 2026
 
 ```text
 This repo is the LinkTrace Ralphthon workspace.

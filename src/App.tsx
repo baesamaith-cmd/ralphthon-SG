@@ -263,6 +263,7 @@ function App() {
             <h2 id="cues-title">Today's Cues</h2>
             <button>Review</button>
           </div>
+          <p className="cue-label">Find later by</p>
           <div className="chip-row" aria-label="Recall cues">
             {cueItems.map((cue) => (
               <button className="cue-chip" key={cue}>
@@ -292,6 +293,7 @@ function App() {
                     <h3>{item.title}</h3>
                     <p>{item.summary}</p>
                     <small>{item.failureReason ? `${item.domain} · ${item.failureReason}` : item.domain}</small>
+                    <p className="cue-label">Find later by</p>
                     <div className="mini-chip-row" aria-label={`Recall cues for ${item.title}`}>
                       {item.recallCues.map((cue) => (
                         <span className="mini-chip" key={cue}>

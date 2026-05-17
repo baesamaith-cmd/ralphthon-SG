@@ -48,14 +48,56 @@ function makeId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 }
 
+const STOP_WORDS = new Set([
+  "the",
+  "and",
+  "with",
+  "this",
+  "that",
+  "from",
+  "into",
+  "link",
+  "page",
+  "saved",
+  "metadata",
+]);
+
+function clampSummary(text: string, fallback: string) {
+  const normalized = (text || fallback).replace(/\s+/g, " ").trim();
+  if (normalized.length <= 160) return normalized;
+  return `${normalized.slice(0, 157).trim()}...`;
+}
+
 function cuesFromText(text: string, domain: string) {
   const words = `${text} ${domain.replace(/\./g, " ")}`
     .toLowerCase()
     .replace(/[^a-z0-9가-힣\s-]/g, " ")
     .split(/\s+/)
-    .filter((word) => word.length > 2);
+    .filter((word) => word.length > 2 && !STOP_WORDS.has(word));
 
-  return Array.from(new Set(words)).slice(0, 3);
+  const uniqueWords = Array.from(new Set(words));
+  const domainCue = domain.split(".")[0]?.replace(/-/g, " ");
+  const phraseCues = [
+    uniqueWords.slice(0, 2).join(" "),
+    uniqueWords.slice(2, 4).join(" "),
+    domainCue ? `${domainCue} note` : "",
+    uniqueWords.includes("sleep") ? "sleep timing" : "",
+    uniqueWords.includes("career") ? "career growth" : "",
+    uniqueWords.includes("agent") ? "agent memory" : "",
+    uniqueWords.includes("video") ? "watch later" : "",
+  ].filter(Boolean);
+
+  const cues = Array.from(new Set(phraseCues))
+    .filter((cue) => cue.split(/\s+/).length <= 5)
+    .slice(0, 5);
+  const fallbackCues = ["find later", "saved source", "manual note"];
+
+  for (const cue of fallbackCues) {
+    if (cues.length >= 3) break;
+    if (!cues.includes(cue)) cues.push(cue);
+  }
+
+  return cues;
 }
 
 function titleFromUrl(url: string) {
@@ -159,6 +201,9 @@ export function buildFallbackSource(urlInput: string, noteInput: string): Source
   const domain = getDomain(url);
   const note = noteInput.trim();
   const fallbackTitle = note || titleFromUrl(url);
+  const fallbackSummary = note
+    ? `Saved note: ${note}`
+    : "Saved locally. LinkTrace will keep the link even if metadata is unavailable.";
 
   return {
     id: makeId(),
@@ -166,7 +211,7 @@ export function buildFallbackSource(urlInput: string, noteInput: string): Source
     title: fallbackTitle.slice(0, 80),
     domain,
     description: note || "Saved locally while LinkTrace checks capture quality.",
-    summary: note || "Saved locally. LinkTrace will keep the link even if metadata is unavailable.",
+    summary: clampSummary(fallbackSummary, "Saved locally for later review."),
     recallCues: cuesFromText(note || domain, domain),
     tags: ["manual", "local"],
     captureStatus: "pending",
@@ -300,7 +345,7 @@ export function mergeCaptureResult(source: SourceItem, result: CaptureResult): S
     title: result.title || source.title,
     domain: result.domain || source.domain,
     description: result.description || source.description,
-    summary: result.description || source.summary,
+    summary: clampSummary(result.description, source.summary),
     recallCues: cuesFromText(cueText, result.domain || source.domain),
     tags: Array.from(new Set([...source.tags, result.captureMethod, result.domain])),
     captureStatus: result.captureStatus,

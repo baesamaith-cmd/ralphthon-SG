@@ -1,6 +1,6 @@
 ---
 id: 006
-status: todo
+status: done
 title: "Generate summaries and recall cues"
 ---
 
@@ -61,3 +61,9 @@ npm run build
 ## Hints
 
 - Good cues sound like vague memory: `that grant thing`, `agent memory`, `sleep timing`, `LinkedIn hiring post`.
+
+## Completion Notes
+
+- Files changed: `src/capture.ts`, `src/App.tsx`, `src/styles.css`, `doc/tickets/006-recall-cue-generation.md`.
+- Checks run: `npm run build`; summary-length check with `node -e`; cue-count and cue-length check with `node -e`; `rg -n "Find later by|clampSummary|STOP_WORDS|fallbackCues|sleep timing|career growth|agent memory|watch later|recallCues" src/App.tsx src/capture.ts`.
+- Added deterministic rule-based summary clamping and recall cue generation from title, description, pasted note, and domain. Every fallback source gets 3 to 5 short human-memory cues, and Today Brief now labels cues as `Find later by` instead of presenting them as tags.

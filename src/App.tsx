@@ -303,6 +303,10 @@ function App() {
   const [copyState, setCopyState] = useState("Copy Markdown");
   const [clusterZoom, setClusterZoom] = useState(1);
   const [clusterPan, setClusterPan] = useState({ x: 0, y: 0 });
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const captureRef = useRef<HTMLFormElement | null>(null);
+  const briefRef = useRef<HTMLElement | null>(null);
+  const clustersRef = useRef<HTMLElement | null>(null);
   const dragStartRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
   const pinchDistanceRef = useRef<number | null>(null);
 
@@ -443,6 +447,27 @@ function App() {
     setSources(DEMO_SOURCES);
   }
 
+  function loadDemoAndShowBrief() {
+    loadDemoMemory();
+    window.setTimeout(() => briefRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  }
+
+  function tryDemoSearch() {
+    if (sources.length === 0) setSources(DEMO_SOURCES);
+    setSearchQuery("agent workflow");
+    window.setTimeout(() => searchInputRef.current?.focus(), 0);
+  }
+
+  function showClusters() {
+    if (sources.length === 0) setSources(DEMO_SOURCES);
+    clustersRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function focusCapture() {
+    captureRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(() => document.getElementById("source-url")?.focus(), 120);
+  }
+
   function simulateShareToLinkTrace() {
     saveSharedSource(
       "https://github.com/Q00/ouroboros",
@@ -551,7 +576,7 @@ function App() {
             <h1>LinkTrace</h1>
             <p className="tagline">Save messy links. Find them by memory.</p>
           </div>
-          <button className="icon-button" aria-label="Focus source capture" type="button">
+          <button className="icon-button" aria-label="Focus source capture" type="button" onClick={focusCapture}>
             +
           </button>
         </header>
@@ -560,6 +585,7 @@ function App() {
           <span>Memory search</span>
           <input
             id="memory-search"
+            ref={searchInputRef}
             type="search"
             placeholder="Search by what you remember..."
             aria-label="Search by what you remember"
@@ -687,68 +713,25 @@ function App() {
 
         <p className="local-note">Demo data is stored locally in this browser.</p>
 
-        <section className="share-simulation" aria-label="Share to LinkTrace demo">
-          <div>
-            <h2>Share to LinkTrace</h2>
-            <p>Receive a link, save immediately, then review later in Today Brief and Memory Clusters.</p>
-          </div>
-          <button type="button" onClick={simulateShareToLinkTrace}>
-            Simulate share
-          </button>
-        </section>
-
-        <section className="context-bundle" aria-label="Agent context bundle">
+        <section className="demo-path" aria-label="Three minute demo path">
           <div className="section-heading">
             <div>
-              <h2>Agent Context Bundle</h2>
-              <p className="section-subtitle">Source-backed memory for future AI work</p>
+              <h2>3-minute demo</h2>
+              <p className="section-subtitle">Load memory, recall a vague link, then inspect clusters</p>
             </div>
-            <button type="button" onClick={handleGenerateContextBundle}>
-              Generate
+          </div>
+          <div className="demo-actions">
+            <button type="button" onClick={loadDemoAndShowBrief}>
+              Load memory
+            </button>
+            <button type="button" onClick={tryDemoSearch}>
+              Try search
+            </button>
+            <button type="button" onClick={showClusters}>
+              View clusters
             </button>
           </div>
-          {contextBundle ? (
-            <>
-              <textarea readOnly value={contextBundle} aria-label="Generated context bundle Markdown" />
-              <button type="button" onClick={handleCopyContextBundle}>
-                {copyState}
-              </button>
-            </>
-          ) : null}
         </section>
-
-        <form className="capture-form" onSubmit={handleSubmit}>
-          <p className="capture-note">
-            Capture fallback ladder: metadata, partial metadata, link-only save, then manual context.
-          </p>
-          <label htmlFor="source-url">
-            <span>Save a link</span>
-            <input
-              id="source-url"
-              inputMode="url"
-              placeholder="Paste a URL..."
-              type="text"
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-            />
-          </label>
-          <label htmlFor="source-note">
-            <span>Optional note</span>
-            <input
-              id="source-note"
-              placeholder="Why will this matter later?"
-              type="text"
-              value={note}
-              onChange={(event) => setNote(event.target.value)}
-            />
-          </label>
-          <div className="form-actions">
-            <button type="submit">Save link</button>
-            <button type="button" onClick={clearSources}>
-              Clear demo data
-            </button>
-          </div>
-        </form>
 
         <section className="panel" aria-labelledby="cues-title">
           <div className="section-heading">
@@ -765,13 +748,13 @@ function App() {
           </div>
         </section>
 
-        <section className="panel" aria-labelledby="brief-title">
+        <section className="panel" aria-labelledby="brief-title" ref={briefRef}>
           <div className="section-heading">
             <div>
               <h2 id="brief-title">Today Brief</h2>
               <p className="section-subtitle">{todaySources.length} saved today</p>
             </div>
-            <button type="button" onClick={loadDemoMemory}>
+            <button type="button" onClick={loadDemoAndShowBrief}>
               Load demo memory
             </button>
           </div>
@@ -820,7 +803,7 @@ function App() {
           )}
         </section>
 
-        <section className="panel clusters-panel" aria-labelledby="clusters-title">
+        <section className="panel clusters-panel" aria-labelledby="clusters-title" ref={clustersRef}>
           <div className="section-heading">
             <div>
               <h2 id="clusters-title">Memory Clusters</h2>
@@ -893,6 +876,69 @@ function App() {
               ))}
             </div>
           </div>
+        </section>
+
+        <section className="share-simulation" aria-label="Share to LinkTrace demo">
+          <div>
+            <h2>Share to LinkTrace</h2>
+            <p>Receive a link, save immediately, then review later in Today Brief and Memory Clusters.</p>
+          </div>
+          <button type="button" onClick={simulateShareToLinkTrace}>
+            Simulate share
+          </button>
+        </section>
+
+        <form className="capture-form" ref={captureRef} onSubmit={handleSubmit}>
+          <p className="capture-note">
+            Capture fallback ladder: metadata, partial metadata, link-only save, then manual context.
+          </p>
+          <label htmlFor="source-url">
+            <span>Save a link</span>
+            <input
+              id="source-url"
+              inputMode="url"
+              placeholder="Paste a URL..."
+              type="text"
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+            />
+          </label>
+          <label htmlFor="source-note">
+            <span>Optional note</span>
+            <input
+              id="source-note"
+              placeholder="Why will this matter later?"
+              type="text"
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+            />
+          </label>
+          <div className="form-actions">
+            <button type="submit">Save link</button>
+            <button type="button" onClick={clearSources}>
+              Clear demo data
+            </button>
+          </div>
+        </form>
+
+        <section className="context-bundle" aria-label="Agent context bundle">
+          <div className="section-heading">
+            <div>
+              <h2>Agent Context Bundle</h2>
+              <p className="section-subtitle">Source-backed memory for future AI work</p>
+            </div>
+            <button type="button" onClick={handleGenerateContextBundle}>
+              Generate
+            </button>
+          </div>
+          {contextBundle ? (
+            <>
+              <textarea readOnly value={contextBundle} aria-label="Generated context bundle Markdown" />
+              <button type="button" onClick={handleCopyContextBundle}>
+                {copyState}
+              </button>
+            </>
+          ) : null}
         </section>
 
         {selectedCluster ? (

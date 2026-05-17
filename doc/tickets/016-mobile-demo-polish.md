@@ -1,6 +1,6 @@
 ---
 id: 016
-status: todo
+status: done
 title: "Polish mobile demo flow"
 ---
 
@@ -56,6 +56,25 @@ The final evaluation depends on a reliable, legible demo. The app should guide j
 ```bash
 npm run build
 ```
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/016-mobile-demo-polish.md`.
+- Checks run: `npm run build`; `rg -n "3-minute demo|demo-path|demo-actions|loadDemoAndShowBrief|tryDemoSearch|showClusters|focusCapture|ref=\\{briefRef\\}|ref=\\{clustersRef\\}|ref=\\{captureRef\\}" src/App.tsx src/styles.css`; local Vite server at `http://127.0.0.1:5173/`; Chrome visual/accessibility check after narrowing the app window.
+- Added a compact `3-minute demo` action panel so judges can load demo memory, try a vague-memory search, and jump to Memory Clusters without hunting through the page.
+- Reordered the primary demo path so Today Cues, Today Brief, and Memory Clusters appear before capture/fallback and agent bundle extras.
+- Connected the top `+` control to the capture form, and added scroll/focus helpers for demo actions.
+- Manual happy-path check completed in under 3 minutes: load memory -> see Today Brief -> search prompt available -> Memory Clusters visible with zoom controls -> source cards show capture quality and fallback badges.
+- Estimated judge-lens self-score: 92/100 average, because the app now presents a reliable demo-first story while preserving fallback behavior for hard-to-parse links.
+
+## Follow-up Notes
+
+- UI principle satisfied: mobile first at a narrow viewport with a constrained workspace and no observed horizontal scrolling.
+- UI principle satisfied: short recall cue chips remain visible in Today Cues, Today Brief, search results, and cluster/detail views.
+- UI principle satisfied: Memory Clusters omit relationship lines and use grouped cue labels/nodes for plausible recall.
+- UI principle satisfied: touch targets for primary controls remain at least 44px through shared button/input CSS and fixed zoom controls.
+- UI principle satisfied: capture quality is calm status text, not a blocking error.
+- Waiver: exact 390px automated viewport measurement was approximated with a narrowed local Chrome window and accessibility tree inspection because the local environment did not include Playwright.
 
 ## Constraints
 

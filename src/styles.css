@@ -212,6 +212,14 @@ h1 {
   line-height: 1.35;
 }
 
+.save-status {
+  border-left: 3px solid #1f6f5b;
+  padding-left: 9px;
+  color: #244d3f;
+  font-size: 0.86rem;
+  font-weight: 750;
+}
+
 .capture-form input {
   width: 100%;
   min-height: 46px;

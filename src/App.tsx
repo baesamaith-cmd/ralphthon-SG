@@ -301,6 +301,7 @@ function App() {
   const [selectedClusterId, setSelectedClusterId] = useState<string | null>(null);
   const [contextBundle, setContextBundle] = useState("");
   const [copyState, setCopyState] = useState("Copy Markdown");
+  const [saveStatus, setSaveStatus] = useState("");
   const [clusterZoom, setClusterZoom] = useState(1);
   const [clusterPan, setClusterPan] = useState({ x: 0, y: 0 });
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -422,13 +423,24 @@ function App() {
   function saveSharedSource(nextUrl: string, nextNote: string) {
     const fallbackSource = buildFallbackSource(nextUrl, nextNote);
     setSources((current) => [fallbackSource, ...current]);
-    void captureUrl(nextUrl).then((result) => {
-      setSources((current) =>
-        current.map((source) =>
-          source.id === fallbackSource.id ? mergeCaptureResult(source, result) : source,
-        ),
-      );
-    });
+    setSaveStatus("Saved locally. Checking capture quality...");
+    window.setTimeout(() => briefRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    void captureUrl(nextUrl)
+      .then((result) => {
+        setSources((current) =>
+          current.map((source) =>
+            source.id === fallbackSource.id ? mergeCaptureResult(source, result) : source,
+          ),
+        );
+        setSaveStatus(
+          result.captureStatus === "metadata"
+            ? "Saved with metadata."
+            : "Saved with fallback. You can still find it by memory.",
+        );
+      })
+      .catch(() => {
+        setSaveStatus("Saved as a local fallback. Metadata can be added later.");
+      });
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -890,8 +902,9 @@ function App() {
 
         <form className="capture-form" ref={captureRef} onSubmit={handleSubmit}>
           <p className="capture-note">
-            Capture fallback ladder: metadata, partial metadata, link-only save, then manual context.
+            Paste a URL or a shared message containing a URL. LinkTrace saves first, then checks metadata.
           </p>
+          {saveStatus ? <p className="save-status">{saveStatus}</p> : null}
           <label htmlFor="source-url">
             <span>Save a link</span>
             <input

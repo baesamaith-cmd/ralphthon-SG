@@ -16,9 +16,11 @@ export type CaptureResult = {
 };
 
 const FETCH_TIMEOUT_MS = 1800;
+const URL_IN_TEXT_PATTERN = /https?:\/\/[^\s<>"']+|(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s<>"']*)?/i;
 
 export function normalizeUrl(input: string) {
-  const trimmed = input.trim();
+  const match = input.trim().match(URL_IN_TEXT_PATTERN);
+  const trimmed = (match?.[0] ?? input).trim().replace(/[),.;!?]+$/, "");
   if (!trimmed) return "";
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
   return `https://${trimmed}`;

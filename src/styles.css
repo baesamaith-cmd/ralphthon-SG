@@ -333,6 +333,37 @@ h1 {
   font-weight: 700;
 }
 
+.screenshot-upload {
+  display: grid;
+  gap: 8px;
+  color: #34433c;
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.screenshot-upload input {
+  min-height: 44px;
+  border: 1px solid #c7d0c6;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.screenshot-note {
+  border-left: 3px solid #1f6f5b;
+  padding-left: 9px;
+  color: #596960;
+  font-size: 0.82rem;
+}
+
+.screenshot-preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border: 1px solid #dbe1d8;
+  border-radius: 8px;
+  background: #f4f7f1;
+}
+
 .empty-state {
   margin-top: 14px;
   padding: 14px;

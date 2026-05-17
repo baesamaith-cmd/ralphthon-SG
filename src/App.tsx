@@ -1,4 +1,4 @@
-import { FormEvent, TouchEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, TouchEvent, useEffect, useMemo, useRef, useState } from "react";
 import { buildFallbackSource, captureUrl, mergeCaptureResult } from "./capture";
 import { buildMemoryClusters } from "./clusters";
 import type { SourceItem } from "./types";
@@ -381,6 +381,43 @@ function App() {
     pinchDistanceRef.current = distance;
   }
 
+  function updateSourceWithScreenshot(sourceId: string, screenshotDataUrl: string) {
+    setSources((current) =>
+      current.map((source) =>
+        source.id === sourceId
+          ? {
+              ...source,
+              screenshotDataUrl,
+              captureStatus: "screenshot",
+              captureMethod: "fallback",
+              summary: source.summary || "Screenshot preserved as local context.",
+            }
+          : source,
+      ),
+    );
+    setSelectedSource((current) =>
+      current?.id === sourceId
+        ? {
+            ...current,
+            screenshotDataUrl,
+            captureStatus: "screenshot",
+            captureMethod: "fallback",
+            summary: current.summary || "Screenshot preserved as local context.",
+          }
+        : current,
+    );
+  }
+
+  function handleScreenshotUpload(sourceId: string, event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") updateSourceWithScreenshot(sourceId, reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+
   return (
     <main className="app-shell" aria-label="LinkTrace workspace">
       <section className="workspace">
@@ -462,6 +499,25 @@ function App() {
                 </div>
               </div>
               <span className="quality-badge">{selectedSource.captureStatus}</span>
+              <label className="screenshot-upload" htmlFor={`screenshot-${selectedSource.id}`}>
+                <span>Add screenshot</span>
+                <input
+                  accept="image/*"
+                  id={`screenshot-${selectedSource.id}`}
+                  type="file"
+                  onChange={(event) => handleScreenshotUpload(selectedSource.id, event)}
+                />
+              </label>
+              <p className="screenshot-note">
+                Screenshot fallback preserves visual context locally. OCR/image understanding is not enabled.
+              </p>
+              {selectedSource.screenshotDataUrl ? (
+                <img
+                  alt={`Screenshot fallback for ${selectedSource.title}`}
+                  className="screenshot-preview"
+                  src={selectedSource.screenshotDataUrl}
+                />
+              ) : null}
             </article>
           </section>
         ) : null}

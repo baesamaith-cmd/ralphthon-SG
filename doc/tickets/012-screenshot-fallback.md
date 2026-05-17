@@ -1,6 +1,6 @@
 ---
 id: 012
-status: todo
+status: done
 title: "Add screenshot fallback capture"
 ---
 
@@ -59,3 +59,9 @@ npm run build
 ## Hints
 
 - Use local browser file reading and store a data URL for the demo.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/012-screenshot-fallback.md`.
+- Checks run: `npm run build`; `rg -n "Add screenshot|screenshotDataUrl|captureStatus: \"screenshot\"|FileReader|readAsDataURL|screenshot-preview|OCR/image understanding is not enabled|accept=\"image/\\*\"|screenshot-upload" src/App.tsx src/styles.css`.
+- Added source-detail screenshot upload via local `FileReader`, stores the image as `screenshotDataUrl` in localStorage-backed source state, updates capture status to `screenshot`, shows a screenshot fallback badge through the status badge, previews the uploaded image, and clearly states that OCR/image understanding is not enabled.

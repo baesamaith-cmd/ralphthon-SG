@@ -115,6 +115,44 @@ h1 {
   font-size: 0.86rem;
 }
 
+.capture-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #dbe1d8;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.capture-form label {
+  display: grid;
+  gap: 7px;
+  color: #34433c;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.capture-form input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #c7d0c6;
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-actions button:first-child {
+  border-color: #1f6f5b;
+  background: #1f6f5b;
+  color: #ffffff;
+}
+
 .panel {
   margin-top: 18px;
   padding: 16px;
@@ -173,11 +211,19 @@ h1 {
   font-size: 0.98rem;
 }
 
-.source-card p {
+.source-card p,
+.empty-state p {
   margin-top: 5px;
   color: #596960;
   font-size: 0.9rem;
   line-height: 1.35;
+}
+
+.source-card small {
+  display: block;
+  margin-top: 7px;
+  color: #748079;
+  font-size: 0.78rem;
 }
 
 .source-card span {
@@ -191,6 +237,18 @@ h1 {
   padding: 0 10px;
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.empty-state {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px dashed #cbd4c7;
+  border-radius: 8px;
+  background: #fbfcf8;
+}
+
+.empty-state h3 {
+  font-size: 0.98rem;
 }
 
 .cluster-map {

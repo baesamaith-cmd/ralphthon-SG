@@ -1,6 +1,6 @@
 ---
 id: 003
-status: todo
+status: done
 title: "Store saved sources locally"
 ---
 
@@ -71,3 +71,9 @@ npm run build
 
 - Use a stable localStorage key such as `linktrace.sources`.
 - Generate IDs client-side.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/003-local-source-storage.md`.
+- Checks run: `npm run build`; `rg -n "type SourceItem|id: string|url: string|title: string|domain: string|description: string|summary: string|recallCues|tags|captureStatus|captureMethod|createdAt|screenshotDataUrl|linktrace\\.sources|localStorage|Clear demo data|Shared links will appear here|type=\"text\"" src/App.tsx`.
+- Added the `SourceItem` model, localStorage persistence under `linktrace.sources`, manual URL/note saving with client-side IDs, URL normalization without network calls, clear-data action, source list rendering, and an empty state explaining that shared links will appear in Today Brief.

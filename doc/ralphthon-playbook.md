@@ -120,7 +120,9 @@ It should include:
 - how to pick the next ticket
 - how to verify work
 - when to mark a ticket done
+- when to mark a ticket done-with-follow-up
 - when to mark a ticket blocked
+- how to preserve a demo fallback
 - whether to stop after one ticket or continue
 
 ## Phase 5: Dry Run
@@ -137,6 +139,8 @@ The dry run is successful if:
 
 If the dry run fails, fix the documents and tickets, not just the code.
 
+The dry run should also prove that Demo Survival Mode is clear: if a ticket misses aspirational quality criteria but still preserves a demoable fallback, the loop should record follow-up notes and keep moving.
+
 ## Phase 6: Code-Touch-Ban Operation
 
 Once the ban starts:
@@ -144,7 +148,8 @@ Once the ban starts:
 - Humans do not edit code manually.
 - Humans may decide whether to continue, stop, or inspect results.
 - The agent works only from repository documents, tickets, tests, and command output.
-- If the agent is blocked, it records the blocker in the ticket instead of guessing.
+- If the agent misses a quality target but preserves a demoable fallback, it records `done-with-follow-up` and keeps moving.
+- If the agent is blocked because build or minimum demo viability fails, it records the blocker in the ticket instead of guessing.
 
 ## Recommended Start Prompt For Tomorrow
 

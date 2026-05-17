@@ -17,6 +17,12 @@ title: "short imperative title"
 
 What user pain or missing behavior this solves.
 
+## UI/UX Research Dependency
+
+- For UI tickets, check `doc/ux-research.md` first.
+- Apply the chosen UI principles unless the ticket explicitly says otherwise.
+- If a principle cannot be applied, record the reason in `## Follow-up Notes`.
+
 ## Acceptance
 
 - Concrete observable behavior.
@@ -29,6 +35,18 @@ What user pain or missing behavior this solves.
 test command here
 ```
 
+## Demo Fallback
+
+- Minimum demoable behavior to preserve if the full feature misses target criteria.
+- When fallback works and build passes, mark `done-with-follow-up` instead of `blocked`.
+
+## Retry Budget and Stop Rule
+
+- Critical demo path: hard-critical, soft-critical, or optional.
+- Maximum implementation passes: 2 to 4, depending on complexity.
+- Target judge score: 90/100 average.
+- Use `blocked` only when build or minimum demo viability fails.
+
 ## Constraints
 
 - What not to change.
@@ -39,4 +57,3 @@ test command here
 
 - Optional implementation hints.
 ```
-

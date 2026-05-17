@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .DS_Store
 .claude/
+node_modules/
+.vite/
 tmp/
 dist/
 build/

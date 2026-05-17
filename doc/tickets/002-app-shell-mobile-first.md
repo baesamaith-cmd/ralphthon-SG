@@ -1,6 +1,6 @@
 ---
 id: 002
-status: todo
+status: done
 title: "Build mobile-first LinkTrace app shell"
 ---
 
@@ -65,3 +65,9 @@ npm run build
 - If the stack is not initialized yet, choose a fast web stack suitable for a mobile PWA demo.
 - Favor a real app screen over explanatory copy.
 - Use the UI/UX research ticket as the design source of truth.
+
+## Completion Notes
+
+- Files changed: `.gitignore`, `package.json`, `package-lock.json`, `index.html`, `vite.config.ts`, `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`, `src/main.tsx`, `src/App.tsx`, `src/styles.css`, `doc/tickets/002-app-shell-mobile-first.md`.
+- Checks run: `npm install`; `npm run build`; `rg -n "LinkTrace|Save messy links\\. Find them by memory\\.|Search by what you remember\\.\\.\\.|Today's Cues|Today Brief|Memory Clusters|Demo data is stored locally|44px|min-height: 44px|min-height: 48px|doc/ux-research|bottom sheet|cue-chip|no relationship" src doc/ux-research.md`.
+- Added the React + TypeScript + Vite app shell with the LinkTrace workspace as the first screen, mobile-first layout, search field, Today's Cues, Today Brief, Memory Clusters, local-storage note, 44px-or-larger primary controls, cue chips, capture-quality preview, and a cluster preview without relationship lines.

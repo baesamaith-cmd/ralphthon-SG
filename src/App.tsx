@@ -1,24 +1,8 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { buildFallbackSource, captureUrl, mergeCaptureResult } from "./capture";
+import type { SourceItem } from "./types";
 
 const STORAGE_KEY = "linktrace.sources";
-
-type CaptureStatus = "manual" | "metadata" | "partial" | "link_only" | "screenshot";
-
-export type SourceItem = {
-  id: string;
-  url: string;
-  title: string;
-  domain: string;
-  description: string;
-  summary: string;
-  recallCues: string[];
-  tags: string[];
-  captureStatus: CaptureStatus;
-  captureMethod: "manual" | "demo";
-  createdAt: string;
-  note?: string;
-  screenshotDataUrl?: string;
-};
 
 const DEMO_SOURCES: SourceItem[] = [
   {
@@ -146,50 +130,6 @@ const fallbackClusters = [
   { name: "Community links", count: 2 },
 ];
 
-function getDomain(url: string) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return "manual source";
-  }
-}
-
-function normalizeUrl(input: string) {
-  const trimmed = input.trim();
-  if (!trimmed) return "";
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  return `https://${trimmed}`;
-}
-
-function buildSource(urlInput: string, noteInput: string): SourceItem {
-  const url = normalizeUrl(urlInput);
-  const domain = getDomain(url);
-  const note = noteInput.trim();
-  const fallbackTitle = domain === "manual source" ? "Saved manual link" : domain;
-  const cueBase = note || domain.replace(/\./g, " ");
-
-  return {
-    id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
-    url,
-    title: note ? note.slice(0, 64) : fallbackTitle,
-    domain,
-    description: note || "Saved locally before metadata capture runs.",
-    summary: note
-      ? `Saved note: ${note}`
-      : "Saved locally. Metadata and richer summary will be added by a later ticket.",
-    recallCues: cueBase
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 3)
-      .map((cue) => cue.toLowerCase()),
-    tags: ["manual", "local"],
-    captureStatus: "manual",
-    captureMethod: "manual",
-    createdAt: new Date().toISOString(),
-    note: note || undefined,
-  };
-}
-
 function readStoredSources(): SourceItem[] {
   if (typeof window === "undefined") return [];
 
@@ -238,7 +178,15 @@ function App() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!url.trim()) return;
-    setSources((current) => [buildSource(url, note), ...current]);
+    const fallbackSource = buildFallbackSource(url, note);
+    setSources((current) => [fallbackSource, ...current]);
+    void captureUrl(url).then((result) => {
+      setSources((current) =>
+        current.map((source) =>
+          source.id === fallbackSource.id ? mergeCaptureResult(source, result) : source,
+        ),
+      );
+    });
     setUrl("");
     setNote("");
   }
@@ -278,6 +226,9 @@ function App() {
         <p className="local-note">Demo data is stored locally in this browser.</p>
 
         <form className="capture-form" onSubmit={handleSubmit}>
+          <p className="capture-note">
+            Capture fallback ladder: metadata, partial metadata, link-only save, then manual context.
+          </p>
           <label htmlFor="source-url">
             <span>Save a link</span>
             <input
@@ -340,7 +291,7 @@ function App() {
                   <div>
                     <h3>{item.title}</h3>
                     <p>{item.summary}</p>
-                    <small>{item.domain}</small>
+                    <small>{item.failureReason ? `${item.domain} · ${item.failureReason}` : item.domain}</small>
                     <div className="mini-chip-row" aria-label={`Recall cues for ${item.title}`}>
                       {item.recallCues.map((cue) => (
                         <span className="mini-chip" key={cue}>
@@ -350,6 +301,11 @@ function App() {
                     </div>
                   </div>
                   <span>{item.captureStatus}</span>
+                  {item.failureReason ? (
+                    <p className="fallback-reason">
+                      LinkTrace saved this with the capture fallback ladder.
+                    </p>
+                  ) : null}
                 </article>
               ))}
             </div>

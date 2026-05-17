@@ -1,6 +1,6 @@
 ---
 id: 005
-status: todo
+status: done-with-follow-up
 title: "Capture URL metadata with graceful fallback"
 ---
 
@@ -215,3 +215,17 @@ npm run build
 - Good user-facing failure copy matters: users should understand what happened and what to do next, not see parser jargon.
 - Treat X/Twitter and LinkedIn-style social pages as likely partial captures; do not spend the whole ticket trying to bypass access limits.
 - Treat GitHub and YouTube as high-value smoke-test platforms because they are common shared links and often have useful metadata paths.
+
+## Completion Notes
+
+- Files changed: `src/types.ts`, `src/capture.ts`, `src/App.tsx`, `src/styles.css`, `doc/url-capture-smoke.md`, `doc/tickets/005-url-capture-and-metadata.md`.
+- Checks run: `npm view link-preview-js version description license types --json`; `npm view @mozilla/readability version description license types --json`; `npm view @extractus/oembed-extractor version description license types --json`; `npm run build`.
+- Added a browser-safe capture service that accepts a URL, normalizes and validates it, saves a fallback source immediately, classifies platform and fetch failures, attempts YouTube oEmbed, fetches readable HTML with timeout, extracts Open Graph/Twitter/basic HTML metadata with DOMParser, records content type/final URL/parser used/failure reason, and merges the result into the saved source.
+- The UI now exposes capture quality badges, failure reasons, and a visible capture fallback ladder so blocked links feel handled rather than broken.
+- Package candidates were evaluated in `doc/url-capture-smoke.md`. No package was installed in this pass because the primary MVP failures are browser CORS, login walls, bot protection, or platform limits rather than missing parser capability.
+
+## Follow-up Notes
+
+- Browser clients cannot set a custom `User-Agent`; this would require a later server capture route.
+- Live metadata quality for GitHub/news/blog may still depend on CORS and platform response headers. The current demo-safe fallback stores the source and reason within the save flow.
+- If URL capture becomes a judging centerpiece, add a server capture route and re-evaluate `link-preview-js`, `@mozilla/readability`, and `@extractus/oembed-extractor` behind that route.

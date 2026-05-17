@@ -6,7 +6,7 @@ title: "Add screenshot fallback capture"
 
 ## Problem
 
-Many social links cannot be fetched. Trace should let users keep context by attaching a screenshot when the web is unreadable.
+Many social links cannot be fetched. LinkTrace should let users keep context by attaching a screenshot when the web is unreadable.
 
 ## Acceptance
 

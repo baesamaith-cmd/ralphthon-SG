@@ -6,7 +6,7 @@ title: "Add eval fixtures and judge scorecard"
 
 ## Problem
 
-The team needs a clear way to decide whether Trace is ready for judging. The repo should include eval fixtures and a scorecard that maps the product to judge criteria.
+The team needs a clear way to decide whether LinkTrace is ready for judging. The repo should include eval fixtures and a scorecard that maps the product to judge criteria.
 
 ## Acceptance
 
@@ -27,7 +27,7 @@ The team needs a clear way to decide whether Trace is ready for judging. The rep
 - The scorecard includes a 100-point scoring table.
 - The scorecard says the target is an average judge score above 90/100 before calling the project demo-ready.
 - The scorecard lists concrete improvements if any criterion is below 90.
-- The ticket is complete only if the repo itself can explain why Trace should average above 90/100.
+- The ticket is complete only if the repo itself can explain why LinkTrace should average above 90/100.
 
 ## Quantitative Review Criteria
 

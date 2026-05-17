@@ -6,7 +6,7 @@ title: "Build Today Brief"
 
 ## Problem
 
-Users return to Trace to quickly understand what they saved today. The brief should make random links skimmable and searchable without asking users to organize them.
+Users return to LinkTrace to quickly understand what they saved today. The brief should make random links skimmable and searchable without asking users to organize them.
 
 ## Acceptance
 

@@ -1,8 +1,8 @@
 # Tickets
 
-This directory is intentionally empty until the Ralphthon interview phase is complete.
+This directory contains the LinkTrace Ralphthon ticket queue.
 
-After the actual project is chosen, generate 10 to 20 numbered ticket files here.
+Execute tickets in numbered order unless demo survival requires a small dependency adjustment.
 
 Use this shape:
 

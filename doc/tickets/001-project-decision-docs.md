@@ -1,17 +1,17 @@
 ---
 id: 001
 status: todo
-title: "Define Trace product documents"
+title: "Define LinkTrace product documents"
 ---
 
 ## Problem
 
-The loop needs a clear product definition before implementation. Trace must be framed as a mobile-first link memory for ordinary users, not a generic bookmark app or technical graph demo.
+The loop needs a clear product definition before implementation. LinkTrace must be framed as a mobile-first link memory for ordinary users, not a generic bookmark app or technical graph demo.
 
 ## Acceptance
 
-- `doc/interview.md` is rewritten for Trace.
-- `doc/product.md` defines Trace in one sentence: save messy links now, find them later by memory.
+- `doc/interview.md` is rewritten for LinkTrace.
+- `doc/product.md` defines LinkTrace in one sentence: save messy links now, find them later by memory.
 - `doc/non-goals.md` explicitly excludes folders-first organization, investment advice, dense desktop graph UI, account systems, and mandatory login.
 - `doc/glossary.md` defines `recall cue`, `Today Brief`, `Memory Cluster`, `capture quality`, `fallback ladder`, and `source card`.
 - `doc/architecture.md` records the chosen stack, localStorage persistence, mobile-first UI, PWA/share-target direction, and verification commands.
@@ -20,9 +20,9 @@ The loop needs a clear product definition before implementation. Trace must be f
 
 ## Quantitative Review Criteria
 
-- At least 5 project documents are rewritten for Trace.
-- Each rewritten document contains the word `Trace`.
-- At least 6 glossary terms are Trace-specific.
+- At least 5 project documents are rewritten for LinkTrace.
+- Each rewritten document contains the word `LinkTrace`.
+- At least 6 glossary terms are LinkTrace-specific.
 - At least 3 non-goals protect the product from scope creep.
 - The expected judge score target is stated as `90/100` or higher.
 
@@ -44,7 +44,7 @@ The loop needs a clear product definition before implementation. Trace must be f
 ## Verification
 
 ```bash
-rg -n "Trace|recall cue|Today Brief|Memory Cluster|90/100" doc
+rg -n "LinkTrace|recall cue|Today Brief|Memory Cluster|90/100" doc
 ```
 
 ## Constraints
@@ -55,5 +55,5 @@ rg -n "Trace|recall cue|Today Brief|Memory Cluster|90/100" doc
 
 ## Hints
 
-- Use the judge lenses to phrase Trace as useful to ordinary people while still showing strong agent/harness craft.
+- Use the judge lenses to phrase LinkTrace as useful to ordinary people while still showing strong agent/harness craft.
 - Include the scoring clue: a ticket is not truly complete unless the expected average judge evaluation is above 90/100.

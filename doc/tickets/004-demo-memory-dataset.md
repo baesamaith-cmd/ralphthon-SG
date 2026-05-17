@@ -6,7 +6,7 @@ title: "Add one-tap demo memory dataset"
 
 ## Problem
 
-The live demo must not depend on unreliable external links. Trace needs a one-tap dataset that instantly shows summaries, recall cues, and clusters.
+The live demo must not depend on unreliable external links. LinkTrace needs a one-tap dataset that instantly shows summaries, recall cues, and clusters.
 
 ## Acceptance
 

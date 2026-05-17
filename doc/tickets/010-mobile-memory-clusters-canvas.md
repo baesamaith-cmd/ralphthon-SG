@@ -6,7 +6,7 @@ title: "Build zoomable mobile Memory Clusters canvas"
 
 ## Problem
 
-Trace needs a mobile-friendly visualization that gives users the feeling that random saved links naturally form memory clusters. It should not try to explain every relationship.
+LinkTrace needs a mobile-friendly visualization that gives users the feeling that random saved links naturally form memory clusters. It should not try to explain every relationship.
 
 ## Acceptance
 

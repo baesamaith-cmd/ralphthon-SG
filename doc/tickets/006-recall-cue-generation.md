@@ -6,7 +6,7 @@ title: "Generate summaries and recall cues"
 
 ## Problem
 
-Trace's core value is turning random saved links into cues the user can remember later. Every source should get a short summary and `Find later by` cues.
+LinkTrace's core value is turning random saved links into cues the user can remember later. Every source should get a short summary and `Find later by` cues.
 
 ## Acceptance
 

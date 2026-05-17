@@ -6,7 +6,7 @@ title: "Group links into memory clusters"
 
 ## Problem
 
-Users save links without categories. Trace should group similar saved links automatically using recall cues and summaries so users can rediscover patterns later.
+Users save links without categories. LinkTrace should group similar saved links automatically using recall cues and summaries so users can rediscover patterns later.
 
 ## Acceptance
 

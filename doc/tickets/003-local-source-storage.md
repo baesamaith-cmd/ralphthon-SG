@@ -6,7 +6,7 @@ title: "Store saved sources locally"
 
 ## Problem
 
-Trace needs to save random links without requiring login. The MVP should use anonymous local browser storage so demo flow is fast and reliable.
+LinkTrace needs to save random links without requiring login. The MVP should use anonymous local browser storage so demo flow is fast and reliable.
 
 ## Acceptance
 
@@ -69,5 +69,5 @@ npm run build
 
 ## Hints
 
-- Use a stable localStorage key such as `trace.sources`.
+- Use a stable localStorage key such as `linktrace.sources`.
 - Generate IDs client-side.

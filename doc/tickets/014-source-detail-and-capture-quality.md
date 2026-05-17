@@ -6,7 +6,7 @@ title: "Build source detail with capture quality"
 
 ## Problem
 
-Users need to trust what Trace captured. Every saved source should show where its summary and cues came from and how complete the capture was.
+Users need to trust what LinkTrace captured. Every saved source should show where its summary and cues came from and how complete the capture was.
 
 ## Acceptance
 

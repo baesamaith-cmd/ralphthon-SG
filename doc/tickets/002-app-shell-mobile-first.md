@@ -1,19 +1,19 @@
 ---
 id: 002
 status: todo
-title: "Build mobile-first Trace app shell"
+title: "Build mobile-first LinkTrace app shell"
 ---
 
 ## Problem
 
-The demo needs a polished mobile-first surface before features are added. Users should immediately understand that Trace saves random links and helps find them later from memory.
+The demo needs a polished mobile-first surface before features are added. Users should immediately understand that LinkTrace saves random links and helps find them later from memory.
 
 ## Acceptance
 
-- The app opens directly to the Trace workspace, not a landing page.
+- The app opens directly to the LinkTrace workspace, not a landing page.
 - The default viewport is designed for mobile first.
 - The home screen includes:
-  - app name `Trace`
+  - app name `LinkTrace`
   - tagline `Save messy links. Find them by memory.`
   - primary search field with placeholder `Search by what you remember...`
   - sections for `Today's Cues`, `Today Brief`, and `Memory Clusters`

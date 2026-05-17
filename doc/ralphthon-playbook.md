@@ -1,19 +1,19 @@
 # Ralphthon Playbook
 
-This is the operating plan for Ralphthon.
+This is the operating plan for the LinkTrace Ralphthon.
 
-The goal is to use this repository as a project-neutral Ralph loop scaffold that can be rewritten for the actual project tomorrow.
+The goal is to use this repository as a demo-first Ralph loop workspace for LinkTrace. The project direction is already chosen; tomorrow's work should refine scope, execute tickets, and preserve a working demo through graceful fallbacks.
 
 ## The Seven-Step Plan
 
-1. Spend 30 minutes writing an Interview document with a human and/or LLM.
-2. Read `doc/judge-lenses.md` and use it to pressure-test the idea from the judges' likely perspectives.
-3. From the interview, create or rewrite:
+1. Spend 30 minutes refining the Interview document with a human and/or LLM.
+2. Read `doc/judge-lenses.md` and use it to pressure-test LinkTrace from the judges' likely perspectives.
+3. From the interview, refine:
    - `doc/product.md`
    - `doc/non-goals.md`
    - `doc/glossary.md`
    - `doc/architecture.md`
-4. Generate 10 to 20 tickets in `doc/tickets/`.
+4. Use the existing ticket queue in `doc/tickets/`, adding or splitting tickets only when needed.
 5. Make sure every ticket includes:
    - `Acceptance`
    - `Verification`
@@ -24,13 +24,13 @@ The goal is to use this repository as a project-neutral Ralph loop scaffold that
 
 ## Phase 1: Interview
 
-Before writing tickets, create `doc/interview.md`.
+Before running implementation tickets, refine `doc/interview.md`.
 
 Also read `doc/judge-lenses.md` before and during the interview. Use it as a set of perspectives to test the project idea, not as a rigid checklist.
 
 Answer these questions clearly:
 
-- What are we building?
+- What are we building inside LinkTrace?
 - Who is the primary user?
 - What problem does it solve?
 - What is the smallest useful version?
@@ -49,22 +49,22 @@ Then pressure-test the answers through the combined judge lens:
 - Is there a credible distribution or community angle?
 - Are trust, safety, and operational risk handled?
 
-Use the interview to remove ambiguity before the loop starts.
+Use the interview to remove ambiguity before the loop starts, not to restart from a blank project.
 
 ## Phase 2: Project Documents
 
-Rewrite the project documents for the real Ralphthon project:
+Refine the project documents for LinkTrace:
 
 - `doc/product.md`: product goal, user, promise, success criteria.
 - `doc/non-goals.md`: what must not be built.
 - `doc/glossary.md`: terms that the agent must not confuse.
 - `doc/architecture.md`: stack, file layout, conventions, verification commands.
 
-If these files still describe a generic scaffold after the project is chosen, they are not ready.
+If these files still describe a generic scaffold, they are not ready.
 
 ## Phase 3: Tickets
 
-Create 10 to 20 small tickets.
+Maintain 10 to 20 small tickets.
 
 Good tickets are:
 
@@ -154,13 +154,11 @@ Once the ban starts:
 ## Recommended Start Prompt For Tomorrow
 
 ```text
-This repo is a Ralphthon scaffold, not an implementation assignment yet.
+This repo is the LinkTrace Ralphthon workspace.
 
-First, interview me and create doc/interview.md.
-Then read doc/judge-lenses.md and use it as perspective during idea selection.
-Then rewrite product, non-goals, glossary, architecture, and tickets for the actual project.
-Create 10 to 20 small tickets, each with Acceptance and Verification.
-After that, update doc/ralph-loop.md.
-Run only ticket 001 as a dry run.
-After the dry run, stop and report whether the loop is ready for the code-touch-ban phase.
+First, read doc/product.md, doc/architecture.md, doc/ralph-loop.md, and doc/tickets/README.md.
+Then read doc/judge-lenses.md and use it as perspective during tradeoff decisions.
+Execute the next todo ticket in doc/tickets.
+Keep the demo alive: if a feature misses quality criteria, preserve a fallback and record follow-up notes instead of blocking, unless build or minimum demo viability fails.
+For URL capture work, test X/Twitter, Reddit, GitHub, YouTube, news, and blog links one by one, classify failures, evaluate useful parser packages, and rerun the smoke matrix after each parser/package change.
 ```

@@ -6,7 +6,7 @@ title: "Search saved links by memory"
 
 ## Problem
 
-Users often remember a clue, not an exact title or URL. Trace should help them find saved summaries from vague phrases.
+Users often remember a clue, not an exact title or URL. LinkTrace should help them find saved summaries from vague phrases.
 
 ## Acceptance
 

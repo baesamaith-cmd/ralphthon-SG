@@ -6,14 +6,14 @@ title: "Add PWA share target capture path"
 
 ## Problem
 
-Trace's ideal UX is saving links from mobile share sheets. The MVP should include a PWA/share-target path or a credible share-target simulation.
+LinkTrace's ideal UX is saving links from mobile share sheets. The MVP should include a PWA/share-target path or a credible share-target simulation.
 
 ## Acceptance
 
 - App includes PWA manifest metadata.
 - Manifest includes share target configuration if the chosen stack supports it.
 - Shared URL/text can route into the capture flow when supported.
-- If full browser support is limited, app includes a `Share to Trace` demo simulation.
+- If full browser support is limited, app includes a `Share to LinkTrace` demo simulation.
 - The UI explains the intended mobile share flow:
   - receive link
   - save immediately
@@ -41,7 +41,7 @@ Trace's ideal UX is saving links from mobile share sheets. The MVP should includ
 
 ## Demo Fallback
 
-- If browser PWA share target support is unreliable, keep a `Share to Trace` simulation route or button.
+- If browser PWA share target support is unreliable, keep a `Share to LinkTrace` simulation route or button.
 - If manifest support is partial, mark `done-with-follow-up` as long as paste/manual capture remains reliable.
 - Use `blocked` only if this ticket breaks the main app or capture flow.
 

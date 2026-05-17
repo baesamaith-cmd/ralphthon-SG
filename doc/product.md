@@ -1,23 +1,24 @@
 # Product
 
-This file must be rewritten during the Ralphthon interview phase.
+Product name: **LinkTrace**
 
 ## One-Sentence Purpose
 
-TBD after the interview.
+Save messy links now, then find them later by memory.
 
 ## Primary User
 
-TBD after the interview.
+Ordinary mobile users who receive useful links through WhatsApp, X/Twitter, Reddit, GitHub, YouTube, news, blogs, or chats, but cannot read them immediately and do not want to organize them manually.
 
 ## Core Promise
 
-TBD after the interview.
+LinkTrace turns pasted or shared links into short summaries, recall cues, searchable memory, and clustered visual groups. When a link cannot be parsed, the app explains why and keeps a useful fallback instead of losing the link.
 
 ## Success Criteria
 
-- The product has a clear user and urgent use case.
-- The smallest useful version can be built and demoed during Ralphthon.
-- The idea can be judged for impact, technical execution, originality, demo quality, and harness quality.
-- The repo contains enough written context for a fresh-context agent to continue without guessing.
-
+- A user can add or load links and immediately see useful summaries and cues.
+- The demo works on a mobile viewport around 390px wide.
+- Today Brief, search, and Memory Clusters all render from demo data within a 3-minute happy path.
+- URL parsing failures are classified with clear reasons and graceful fallbacks.
+- X/Twitter, Reddit, GitHub, YouTube, news, and blog links are smoke-tested during URL capture work.
+- The Ralph loop can continue through `done-with-follow-up` states without blocking the whole demo.

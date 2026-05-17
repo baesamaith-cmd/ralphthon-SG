@@ -38,12 +38,26 @@ The hackathon priority is a working demo, not perfect completion of every advanc
 
 ## Demo Fallback Rules
 
-- URL fetch unstable: keep demo metadata, domain extraction, manual paste, and link-only fallback.
+- URL fetch unstable: diagnose the failure reason, search for maintained extraction packages when the failure is capability-related, install/apply a suitable package when it fits the stack, and keep demo metadata, domain extraction, manual paste, and link-only fallback if parsing remains unreliable.
 - AI/API unavailable: use rule-based summaries, tags, and recall cues.
-- PWA share target unsupported: keep paste/manual capture and a share-to-Trace simulation.
+- PWA share target unsupported: keep paste/manual capture and a share-to-LinkTrace simulation.
 - Pinch zoom unreliable: keep `+`, `-`, and `Reset` controls as the demo path.
 - Screenshot OCR unavailable: preserve and preview screenshots, but label them as preserved context only.
 - Search quality below target: keep the best cue-based search, document failed queries, and continue if demo queries still show value.
+
+## URL Capture Investigation Rule
+
+URL parsing is a core product risk. Do not treat parse failure as a generic error.
+
+- Always classify the likely failure reason before choosing fallback.
+- Capture status should distinguish invalid URL, network/timeout, HTTP error, unsupported content type, blocked/login-gated page, JavaScript-rendered page, missing metadata, and parser error.
+- If the failure is caused by missing extraction capability, evaluate maintained packages before settling for link-only fallback.
+- Install a package only when it solves a specific failure mode, fits the app runtime, and keeps `npm run build` passing.
+- For URL capture work, run platform smoke tests across X/Twitter, Reddit, GitHub, YouTube, news, and blog examples after each parser/package change.
+- URL capture tickets may use a larger retry budget because parsing quality is core to the demo.
+- Never bypass authentication, paywalls, bot protection, or robots restrictions for the MVP.
+- Browser automation is not a default solution; use it only if scope is explicitly changed.
+- If investigation exceeds the retry budget, keep the demo fallback and record attempted packages in `## Follow-up Notes`.
 
 ## Completion
 

@@ -1,38 +1,36 @@
 # Ralphthon Handoff
 
-This repository is prepared for tomorrow's Ralphthon.
+This repository is prepared for tomorrow's LinkTrace Ralphthon.
 
 ## How To Resume
 
 Use a fresh agent session and say:
 
 ```text
-This repo is a Ralphthon scaffold, not an implementation assignment yet.
+This repo is the LinkTrace Ralphthon workspace.
 
 First, read doc/ralphthon-playbook.md.
-Then read doc/judge-lenses.md and use it as perspective during idea selection.
-Then interview me and create doc/interview.md.
-Then rewrite product, non-goals, glossary, architecture, and tickets for the actual project.
-Create 10 to 20 small tickets, each with Acceptance and Verification.
-After that, update doc/ralph-loop.md.
-Run only ticket 001 as a dry run.
-After the dry run, stop and report whether the loop is ready for the code-touch-ban phase.
+Then read doc/judge-lenses.md and use it as perspective during tradeoff decisions.
+Then read doc/product.md, doc/non-goals.md, doc/glossary.md, doc/architecture.md, and doc/ralph-loop.md.
+Execute the next todo ticket in doc/tickets.
+Keep the demo alive: if a feature misses quality criteria, preserve a fallback and record follow-up notes instead of blocking, unless build or minimum demo viability fails.
+For URL capture work, run platform smoke tests one by one for X/Twitter, Reddit, GitHub, YouTube, news, and blog links, then evaluate parser packages and rerun the matrix when a package changes.
 ```
 
-Do not begin implementation until the actual Ralphthon project has been clarified and ticketed.
+Do not begin unrelated implementation outside the ticket queue.
 
 ## Current State
 
-- The repository is intentionally project-neutral.
-- The important artifact for tomorrow is the Ralphthon workflow.
+- The repository is now aligned around LinkTrace.
+- The important artifact for tomorrow is a demo-first Ralph loop that keeps producing a usable result.
 - Judge-oriented planning notes live in `doc/judge-lenses.md`.
-- Verification commands must be chosen after the actual stack is selected.
+- Verification commands should include `npm run build` once the app stack exists.
 
 ## Why This Structure Exists
 
 The Ralph loop should work even when the agent starts with fresh context. The project therefore stores product intent, non-goals, glossary, architecture, tickets, and loop rules inside the repository.
 
-Tomorrow, those documents should be rewritten for the real project before the loop starts.
+Tomorrow, those documents can be refined, but the loop should not restart from a blank idea.
 
 ## Ralphthon Plan
 

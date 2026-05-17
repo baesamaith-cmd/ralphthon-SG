@@ -6,7 +6,7 @@ title: "Generate context bundle from saved links"
 
 ## Problem
 
-Trace should connect personal memory to future AI work. Users should be able to export saved summaries and cues as a context bundle for an AI agent.
+LinkTrace should connect personal memory to future AI work. Users should be able to export saved summaries and cues as a context bundle for an AI agent.
 
 ## Acceptance
 
@@ -62,4 +62,4 @@ npm run build
 
 ## Hints
 
-- This feature helps explain Trace as memory for future-you and future-agents.
+- This feature helps explain LinkTrace as memory for future-you and future-agents.

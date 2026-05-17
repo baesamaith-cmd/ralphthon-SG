@@ -6,7 +6,7 @@ title: "Research and choose mobile UI/UX patterns"
 
 ## Problem
 
-Trace needs a mobile demo that feels immediately usable. Before building the interface, the loop should explore proven UI/UX patterns for mobile read-later apps, recall/search surfaces, cue chips, bottom sheets, and zoomable clustered canvases, then apply the best patterns intentionally.
+LinkTrace needs a mobile demo that feels immediately usable. Before building the interface, the loop should explore proven UI/UX patterns for mobile read-later apps, recall/search surfaces, cue chips, bottom sheets, and zoomable clustered canvases, then apply the best patterns intentionally.
 
 ## Acceptance
 
@@ -20,7 +20,7 @@ Trace needs a mobile demo that feels immediately usable. Before building the int
   - mobile zoom/pan or clustered map interaction
 - For each pattern area, record:
   - observed pattern
-  - why it helps Trace
+  - why it helps LinkTrace
   - risk or reason not to overuse it
   - concrete decision for the MVP
 - Add a final `Chosen UI Principles` section with 5 to 8 rules the implementation tickets must follow.

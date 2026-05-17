@@ -73,42 +73,21 @@ Good tickets are:
 - testable
 - small enough for one loop iteration
 - explicit about expected output and error behavior
+- explicit about demo fallback and retry budget
 
-Use this shape:
+Use the canonical shape in `doc/tickets/README.md`. In short, each ticket should include:
 
-```md
----
-id: 001
-status: todo
-title: "short imperative title"
----
+- frontmatter with `id`, `status`, and `title`
+- `## Problem`
+- `## Acceptance`
+- `## Quantitative Review Criteria`
+- `## Retry Budget and Stop Rule`
+- `## Demo Fallback`
+- `## Verification`
+- `## Constraints`
+- optional `## Hints`
 
-## Problem
-
-What user pain or missing behavior this solves.
-
-## Acceptance
-
-- Concrete observable behavior.
-- Include exact command/output/UI state when possible.
-- Include error behavior.
-
-## Verification
-
-```bash
-test command here
-```
-
-## Constraints
-
-- What not to change.
-- Dependencies allowed or forbidden.
-- Compatibility requirements.
-
-## Hints
-
-- Optional implementation hints.
-```
+Execution order is defined in `doc/tickets/README.md`: `001`, `001-ui`, `002`, then ascending numeric ticket IDs from `003` through `017`.
 
 ## Phase 4: Ralph Loop Prompt
 
@@ -135,7 +114,7 @@ The dry run is successful if:
 - the implementation stays inside scope
 - verification passes
 - the ticket status is updated
-- the result is committed
+- the result is committed and pushed to GitHub
 
 If the dry run fails, fix the documents and tickets, not just the code.
 

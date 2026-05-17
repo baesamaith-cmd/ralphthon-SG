@@ -12,7 +12,8 @@ This file should be updated after the real project, stack, and verification comm
 4. Read `doc/architecture.md`.
 5. Read `doc/judge-lenses.md`.
 6. Inspect current git status.
-7. Find the lowest-numbered file in `doc/tickets/` with `status: todo`.
+7. Read `doc/tickets/README.md` for ticket order notes.
+8. Find the next `status: todo` ticket in order: `001`, `001-ui`, `002`, then ascending numeric ticket IDs from `003` onward.
 
 ## Ticket Execution
 
@@ -23,6 +24,7 @@ This file should be updated after the real project, stack, and verification comm
 5. If verification fails, fix the implementation and tests within the ticket's retry budget.
 6. Do not implement future tickets early.
 7. Do not add features outside the ticket.
+8. If a ticket references `doc/ux-research.md` before ticket `001-ui` has created it, use the ticket's fallback wording and do not block on the missing file.
 
 ## Demo Survival Mode
 

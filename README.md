@@ -44,6 +44,7 @@ For URL parsing work, test X/Twitter, Reddit, GitHub, YouTube, news, and blog li
 
 - `doc/product.md`: LinkTrace product definition.
 - `doc/architecture.md`: mobile-first demo architecture and verification plan.
+- `doc/ux-research.md`: UI principles created by ticket `001-ui` before app shell implementation.
 - `doc/ralphthon-playbook.md`: the full seven-step operating plan.
 - `doc/judge-lenses.md`: public judge research and idea-generation lenses.
 - `doc/interview.md`: questions to answer before ticket generation.
@@ -52,19 +53,17 @@ For URL parsing work, test X/Twitter, Reddit, GitHub, YouTube, news, and blog li
 
 ## Verification
 
-Verification commands must be chosen during the interview and architecture phase. Examples:
+Once ticket `002` initializes the app stack, every implementation ticket should keep this passing:
 
 ```bash
-npm test
+npm run build
 ```
 
-```bash
-python3 -m unittest
-```
+Mobile checks should use a viewport around `390px` wide.
 
 ## Requirements
 
-Python 3.11+. Standard library only.
+Node.js 20+ is the default runtime once the app is initialized. Ticket `002` should create the package scripts needed for `npm run build`.
 
 ## License
 

@@ -15,7 +15,7 @@ The live demo must not depend on unreliable external links. LinkTrace needs a on
 - Sources cover multiple unrelated everyday topics, such as:
   - AI tools
   - community links
-  - crypto ecosystem posts
+  - open-source or community project links
   - health or sleep
   - career or learning
   - YouTube/video

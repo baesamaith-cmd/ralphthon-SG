@@ -10,11 +10,20 @@ This document describes the planned LinkTrace demo architecture for Ralphthon.
 
 ## Stack
 
-- Prefer a lightweight React/Vite or Next.js web app unless the selected starter already dictates otherwise.
+- Default stack: React + TypeScript + Vite, using `npm` scripts.
+- If an existing starter is introduced before ticket `002`, it may replace Vite only if it still supports a fast mobile web demo and `npm run build`.
 - Use local browser storage first; no account system is required for the demo.
 - Use deterministic demo data so the presentation does not depend on external websites.
 - URL capture should use a layered parser pipeline: normalize URL, fetch metadata, extract Open Graph/Twitter/basic HTML, try article/oEmbed helpers when useful, classify failure, then save fallback metadata.
 - External packages are allowed when a ticket explicitly justifies them, especially for metadata extraction, readability parsing, HTML parsing, oEmbed, and safe fetch/timeout handling.
+
+## Expected App Shape
+
+- App entry: `src/main.tsx` and `src/App.tsx` after ticket `002`.
+- State persistence: localStorage under `linktrace.sources`.
+- Primary UI surface: mobile-first workspace, not a landing page.
+- PWA/share direction: paste/manual capture first, share-target simulation or manifest support later.
+- Design source of truth: `doc/ux-research.md`, created by ticket `001-ui`.
 
 ## Verification
 

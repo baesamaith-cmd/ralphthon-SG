@@ -6,6 +6,17 @@ Execute tickets in numbered order unless demo survival requires a small dependen
 
 When a ticket passes, commit and push it before moving to the next ticket. When all development tickets are complete, run the final demo gate and open the finished LinkTrace screen in the browser for the user.
 
+## Execution Order
+
+Run tickets in this order:
+
+1. `001-project-decision-docs.md`
+2. `001-ui-ux-pattern-research.md`
+3. `002-app-shell-mobile-first.md`
+4. Then continue by ascending numeric ID from `003` through `017`.
+
+Ticket `001-ui` creates `doc/ux-research.md`. UI tickets after that should follow its `Chosen UI Principles`; if the file is missing before `001-ui` runs, do not block and use the ticket's fallback rules.
+
 Use this shape:
 
 ```md

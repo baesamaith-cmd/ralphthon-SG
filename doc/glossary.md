@@ -8,6 +8,9 @@
 - Today Brief: A daily summary view of recently saved sources.
 - Memory Cluster: A mobile visualization that groups similar sources without requiring user-created folders.
 - capture status: The state of a source after parsing, such as `metadata`, `partial`, `link_only`, or `screenshot`.
+- capture quality: The user-facing badge that explains how complete or partial a source capture is.
+- fallback ladder: The ordered capture path from full metadata to partial metadata, link-only save, manual paste, and screenshot context.
+- source card: The compact UI card for a saved source, including title, summary, recall cues, capture quality, and source domain.
 - failure reason: A structured explanation for partial capture, such as `blocked_or_login_required`, `metadata_missing`, or `js_rendered`.
 - demo dataset: Deterministic seed data used to keep the demo reliable when external links are unavailable.
 

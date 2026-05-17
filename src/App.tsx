@@ -205,6 +205,47 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function captureQuality(source: SourceItem) {
+  switch (source.captureStatus) {
+    case "metadata":
+      return {
+        label: "Metadata only",
+        text: "LinkTrace captured page metadata and generated cues from the readable fields.",
+      };
+    case "partial":
+      return {
+        label: "Partial capture",
+        text: "Some metadata was available, but LinkTrace is keeping fallback context visible.",
+      };
+    case "link_only":
+      return {
+        label: "Link only",
+        text: "The page was blocked or unreadable, so LinkTrace saved the original link and reason.",
+      };
+    case "screenshot":
+      return {
+        label: "Screenshot saved",
+        text: "A screenshot is preserved locally as visual context. OCR is not enabled.",
+      };
+    case "failed":
+      return {
+        label: "Failed safely",
+        text: "The URL could not be parsed, but LinkTrace kept the manual context.",
+      };
+    case "pending":
+      return {
+        label: "Checking",
+        text: "LinkTrace saved the source first and is checking capture quality.",
+      };
+    case "manual":
+    default:
+      return {
+        label: "Manual save",
+        text: "This source was saved from user-provided link and note text.",
+      };
+  }
+}
+
 function App() {
   const [sources, setSources] = useState<SourceItem[]>(readStoredSources);
   const [url, setUrl] = useState("");
@@ -522,7 +563,46 @@ function App() {
                   ))}
                 </div>
               </div>
-              <span className="quality-badge">{selectedSource.captureStatus}</span>
+              <span className="quality-badge">{captureQuality(selectedSource).label}</span>
+              <dl className="detail-grid">
+                <div>
+                  <dt>Capture quality</dt>
+                  <dd>{captureQuality(selectedSource).label}</dd>
+                </div>
+                <div>
+                  <dt>Capture method</dt>
+                  <dd>{selectedSource.captureMethod}</dd>
+                </div>
+                <div>
+                  <dt>Original URL</dt>
+                  <dd>{selectedSource.finalUrl || selectedSource.url}</dd>
+                </div>
+                <div>
+                  <dt>Tags</dt>
+                  <dd>{selectedSource.tags.join(", ")}</dd>
+                </div>
+                {selectedSource.contentType ? (
+                  <div>
+                    <dt>Content type</dt>
+                    <dd>{selectedSource.contentType}</dd>
+                  </div>
+                ) : null}
+                {selectedSource.failureReason ? (
+                  <div>
+                    <dt>Fallback reason</dt>
+                    <dd>{selectedSource.failureReason}</dd>
+                  </div>
+                ) : null}
+              </dl>
+              <p className="capture-explainer">{captureQuality(selectedSource).text}</p>
+              <a
+                className="external-link"
+                href={selectedSource.finalUrl || selectedSource.url}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Open original link
+              </a>
               <label className="screenshot-upload" htmlFor={`screenshot-${selectedSource.id}`}>
                 <span>Add screenshot</span>
                 <input
@@ -624,7 +704,12 @@ function App() {
           ) : (
             <div className="brief-list">
               {todaySources.map((item) => (
-                <article className="source-card" key={item.id}>
+                <button
+                  className="source-card brief-card"
+                  key={item.id}
+                  type="button"
+                  onClick={() => setSelectedSource(item)}
+                >
                   <div>
                     <h3>{item.title}</h3>
                     <p className="summary-line">{item.summary}</p>
@@ -644,13 +729,13 @@ function App() {
                       ))}
                     </div>
                   </div>
-                  <span className="quality-badge">{item.captureStatus}</span>
+                  <span className="quality-badge">{captureQuality(item).label}</span>
                   {item.failureReason ? (
                     <p className="fallback-reason">
                       LinkTrace saved this with the capture fallback ladder.
                     </p>
                   ) : null}
-                </article>
+                </button>
               ))}
             </div>
           )}
@@ -753,7 +838,12 @@ function App() {
             </div>
             <div className="sheet-source-list">
               {selectedClusterSources.map((source) => (
-                <article className="sheet-source" key={source.id}>
+                <button
+                  className="sheet-source"
+                  key={source.id}
+                  type="button"
+                  onClick={() => setSelectedSource(source)}
+                >
                   <h3>{source.title}</h3>
                   <p>{source.summary}</p>
                   <p className="cue-label">Find later by</p>
@@ -764,7 +854,7 @@ function App() {
                       </span>
                     ))}
                   </div>
-                </article>
+                </button>
               ))}
             </div>
           </section>

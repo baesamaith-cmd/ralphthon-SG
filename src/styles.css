@@ -268,6 +268,12 @@ h1 {
   background: #ffffff;
 }
 
+.brief-card {
+  width: 100%;
+  color: inherit;
+  text-align: left;
+}
+
 .result-card {
   display: grid;
   gap: 6px;
@@ -361,6 +367,51 @@ h1 {
   padding: 0 10px;
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.detail-grid div {
+  display: grid;
+  gap: 2px;
+}
+
+.detail-grid dt {
+  color: #66736a;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.detail-grid dd {
+  margin: 0;
+  color: #25322d;
+  font-size: 0.86rem;
+  overflow-wrap: anywhere;
+}
+
+.capture-explainer {
+  border-left: 3px solid #d6c766;
+  padding-left: 9px;
+  color: #6f6530;
+  font-size: 0.82rem;
+}
+
+.external-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #1f6f5b;
+  border-radius: 8px;
+  color: #1f6f5b;
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .screenshot-upload {
@@ -533,10 +584,13 @@ h1 {
 }
 
 .sheet-source {
+  width: 100%;
   padding: 12px;
   border: 1px solid #dbe1d8;
   border-radius: 8px;
   background: #fbfcf8;
+  color: inherit;
+  text-align: left;
 }
 
 .sheet-source h3 {

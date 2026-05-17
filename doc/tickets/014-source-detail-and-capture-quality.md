@@ -1,6 +1,6 @@
 ---
 id: 014
-status: todo
+status: done
 title: "Build source detail with capture quality"
 ---
 
@@ -65,3 +65,9 @@ npm run build
 ## Hints
 
 - Use labels like `Full text`, `Metadata only`, `Screenshot saved`, `Link only`.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/014-source-detail-and-capture-quality.md`.
+- Checks run: `npm run build`; `rg -n "captureQuality|Metadata only|Link only|Screenshot saved|Capture quality|Capture method|Original URL|Tags|Open original link|target=\"_blank\"|brief-card|sheet-source|setSelectedSource\\(item\\)|setSelectedSource\\(source\\)|contentType|failureReason" src/App.tsx src/styles.css`.
+- Added understandable capture quality labels and explanatory copy for metadata, partial, link-only, screenshot, failed, pending, and manual states. Source detail now opens from Today Brief and Memory Cluster bottom-sheet paths, shows title, domain/URL, capture quality, capture method, summary, recall cues, tags, content type/fallback reason when available, screenshot preview, and a safe external original-link action.

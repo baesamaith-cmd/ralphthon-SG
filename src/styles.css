@@ -226,7 +226,26 @@ h1 {
   font-size: 0.78rem;
 }
 
-.source-card span {
+.mini-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.mini-chip {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border-radius: 999px;
+  background: #eef5ee;
+  color: #244d3f;
+  padding: 0 9px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.source-card > span {
   width: fit-content;
   min-height: 28px;
   display: inline-flex;
@@ -301,6 +320,11 @@ h1 {
 .cluster-3 {
   left: 92px;
   bottom: 14px;
+}
+
+.cluster-4 {
+  right: 28px;
+  bottom: 12px;
 }
 
 @media (min-width: 760px) {

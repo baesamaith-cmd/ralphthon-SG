@@ -1,6 +1,6 @@
 ---
 id: 004
-status: todo
+status: done
 title: "Add one-tap demo memory dataset"
 ---
 
@@ -70,3 +70,9 @@ npm run build
 ## Hints
 
 - Include examples that look like links a normal person might receive in WhatsApp or social feeds.
+
+## Completion Notes
+
+- Files changed: `src/App.tsx`, `src/styles.css`, `doc/tickets/004-demo-memory-dataset.md`.
+- Checks run: `npm run build`; `rg -c "id: \"demo-" src/App.tsx`; `rg -n "recallCues: \\[[^\\]]*,[^\\]]*,[^\\]]*\\]" src/App.tsx`; platform/topic scan for demo sources and cluster labels.
+- Added a `Load demo memory` action that instantly writes 9 deterministic demo sources into localStorage, with AI, video, open-source, event/community, health, career, news, social fallback, and weakly clustered food examples. The loaded dataset populates Today Brief, cue chips, and Memory Clusters with three strong groups plus a weak cluster.
